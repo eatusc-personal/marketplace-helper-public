@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1260 580" role="img" aria-labelledby="title description">
+  <title id="title">Marketplace Helper</title>
+  <desc id="description">Neutral header artwork for the Marketplace Helper demo project</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1260" y2="580" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0f172a"/>
+      <stop offset=".58" stop-color="#134e4a"/>
+      <stop offset="1" stop-color="#1d4ed8"/>
+    </linearGradient>
+    <linearGradient id="mark" x1="150" y1="115" x2="430" y2="455" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2dd4bf"/>
+      <stop offset="1" stop-color="#60a5fa"/>
+    </linearGradient>
+  </defs>
+  <rect width="1260" height="580" rx="40" fill="url(#background)"/>
+  <circle cx="278" cy="290" r="178" fill="#fff" opacity=".08"/>
+  <path d="M164 196c0-17 14-31 31-31h112c11 0 21 5 27 15l44 67c8 12 6 27-4 37L267 391c-12 12-32 12-44 0l-62-62c-6-6-9-14-9-22V196h12Z" fill="url(#mark)"/>
+  <circle cx="290" cy="221" r="19" fill="#0f172a" opacity=".8"/>
+  <path d="m205 299 35 35 84-84" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="23"/>
+  <text x="510" y="275" fill="#fff" font-family="Arial, Helvetica, sans-serif" font-size="76" font-weight="700">Marketplace</text>
+  <text x="510" y="355" fill="#99f6e4" font-family="Arial, Helvetica, sans-serif" font-size="76" font-weight="700">Helper</text>
+</svg>

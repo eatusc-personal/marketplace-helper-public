@@ -1,0 +1,59 @@
+{
+  "manifest_version": 3,
+  "name": "Marketplace Helper — Marketplace Autofill (Facebook, Craigslist, Nextdoor)",
+  "short_name": "Marketplace Helper",
+  "version": "1.0.2",
+  "description": "Autofill listing fields & upload photos on Facebook Marketplace, Craigslist, and Nextdoor. You review & click Post.",
+  "icons": {
+    "16": "icons/16.png",
+    "48": "icons/48.png",
+    "128": "icons/128.png"
+  },
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "scripting",
+    "sidePanel",
+    "geolocation"
+  ],
+  "host_permissions": [
+    "https://www.facebook.com/*",
+    "https://*.facebook.com/*",
+    "https://mbasic.facebook.com/*",
+    "https://nextdoor.com/*",
+    "https://*.craigslist.org/*",
+    "https://craigslist.org/*",
+    "https://*.supabase.co/*",
+    "https://nominatim.openstreetmap.org/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.facebook.com/*",
+        "https://nextdoor.com/*",
+        "https://*.nextdoor.com/*",
+        "https://*.craigslist.org/*",
+        "https://craigslist.org/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_title": "Marketplace Helper"
+  },
+  "side_panel": {
+    "default_path": "popup/index.html"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "img/*"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

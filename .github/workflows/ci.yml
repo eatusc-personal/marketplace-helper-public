@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            Website/package-lock.json
+      - name: Install extension dependencies
+        run: npm ci
+      - name: Install dashboard dependencies
+        run: npm ci --prefix Website
+      - name: Test and build extension and dashboard
+        run: npm run check:all
+      - name: Audit extension dependencies
+        run: npm audit --audit-level=high
+      - name: Audit dashboard dependencies
+        run: npm audit --prefix Website --audit-level=high
