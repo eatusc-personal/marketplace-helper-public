@@ -1,5 +1,7 @@
 // Shared utilities for all platform content scripts
 
+import { debugLog } from './debug';
+
 export type RuntimeMsg = {
   action: string;
   data?: any;
@@ -72,7 +74,7 @@ export const fillTextareaField = (field: HTMLElement, value: string): boolean =>
 
 // Photo upload utilities
 export const downloadImageAsFile = async (photoUrl: string, index: number): Promise<File> => {
-  console.log(`[DD] 📸 Downloading photo ${index + 1}:`, photoUrl);
+  debugLog(`[DD] 📸 Downloading photo ${index + 1}:`, photoUrl);
 
   const response = await fetch(photoUrl);
   if (!response.ok) {
@@ -83,7 +85,7 @@ export const downloadImageAsFile = async (photoUrl: string, index: number): Prom
   const fileName = `photo_${index + 1}.jpg`;
   const file = new File([blob], fileName, { type: 'image/jpeg' });
 
-  console.log(`[DD] ✅ Photo ${index + 1} converted to file:`, file.name, file.size);
+  debugLog(`[DD] ✅ Photo ${index + 1} converted to file:`, file.name, file.size);
   return file;
 };
 
@@ -103,32 +105,11 @@ export const uploadFilesToInput = (fileInput: HTMLInputElement, files: File[]): 
 };
 
 // Debug utilities
-export const addTestElement = (): void => {
-  try {
-    const testDiv = document.createElement('div');
-    testDiv.id = 'marketplace-helper-test';
-    testDiv.style.cssText = 'position: fixed; top: 10px; right: 10px; background: red; color: white; padding: 5px; z-index: 9999; font-size: 12px;';
-    testDiv.textContent = 'Content Script Loaded!';
-    document.body.appendChild(testDiv);
-    console.log('[DD] ✅ Test element added to page');
-
-    // Remove test element after 5 seconds
-    setTimeout(() => {
-      if (testDiv.parentNode) {
-        testDiv.parentNode.removeChild(testDiv);
-        console.log('[DD] 🧹 Test element removed');
-      }
-    }, 5000);
-  } catch (error) {
-    console.error('[DD] ❌ Error adding test element:', error);
-  }
-};
-
 export const logAllInputs = (): void => {
-  console.log('[DD] 🔍 All inputs on page:');
+  debugLog('[DD] 🔍 All inputs on page:');
   const allInputs = document.querySelectorAll('input, textarea');
   allInputs.forEach((input, index) => {
-    console.log(`[DD] Input ${index}:`, {
+    debugLog(`[DD] Input ${index}:`, {
       tagName: input.tagName,
       type: (input as HTMLInputElement).type,
       placeholder: (input as HTMLInputElement).placeholder,
@@ -141,39 +122,39 @@ export const logAllInputs = (): void => {
 
 // Content script initialization utilities
 export const initializeContentScript = (platform: string): void => {
-  console.log(`[DD] 🚀 ${platform} content script loading...`);
-  console.log('[DD] 📍 Current URL:', window.location.href);
-  console.log('[DD] 📍 Script execution started at:', new Date().toISOString());
+  debugLog(`[DD] 🚀 ${platform} content script loading...`);
+  debugLog('[DD] 📍 Current URL:', window.location.href);
+  debugLog('[DD] 📍 Script execution started at:', new Date().toISOString());
 
   // Test if we can access the window object
   try {
-    console.log('[DD] 📍 Window object accessible:', typeof window !== 'undefined');
-    console.log('[DD] 📍 Document object accessible:', typeof document !== 'undefined');
-    console.log('[DD] 📍 Chrome runtime available:', typeof chrome !== 'undefined');
-    console.log('[DD] 📍 Chrome runtime onMessage available:', typeof chrome.runtime.onMessage !== 'undefined');
+    debugLog('[DD] 📍 Window object accessible:', typeof window !== 'undefined');
+    debugLog('[DD] 📍 Document object accessible:', typeof document !== 'undefined');
+    debugLog('[DD] 📍 Chrome runtime available:', typeof chrome !== 'undefined');
+    debugLog('[DD] 📍 Chrome runtime onMessage available:', typeof chrome.runtime.onMessage !== 'undefined');
   } catch (error) {
     console.error('[DD] ❌ Error accessing basic objects:', error);
   }
 
   // Set ready flags immediately
-  console.log('[DD] 🎯 Setting ready flags immediately...');
+  debugLog('[DD] 🎯 Setting ready flags immediately...');
   try {
     (window as any).marketplaceHelperReady = true;
     (window as any).__marketplaceHelperInitialized = true;
-    console.log('[DD] ✅ Ready flags set successfully!');
+    debugLog('[DD] ✅ Ready flags set successfully!');
   } catch (error) {
     console.error('[DD] ❌ Error setting ready flags:', error);
   }
 
   // Add a global test function
   (window as any).testMarketplaceHelper = () => {
-    console.log('[DD] 🧪 Manual test function called!');
-    console.log('[DD] 📍 Current URL:', window.location.href);
-    console.log('[DD] 📍 Content script is working!');
+    debugLog('[DD] 🧪 Manual test function called!');
+    debugLog('[DD] 📍 Current URL:', window.location.href);
+    debugLog('[DD] 📍 Content script is working!');
     return 'Content script is loaded and working!';
   };
 
   // Check Chrome runtime availability
-  console.log('[DD] 📍 Chrome runtime available:', typeof chrome !== 'undefined' && typeof chrome.runtime !== 'undefined');
-  console.log('[DD] 📍 Chrome runtime onMessage available:', typeof chrome.runtime.onMessage !== 'undefined');
+  debugLog('[DD] 📍 Chrome runtime available:', typeof chrome !== 'undefined' && typeof chrome.runtime !== 'undefined');
+  debugLog('[DD] 📍 Chrome runtime onMessage available:', typeof chrome.runtime.onMessage !== 'undefined');
 };

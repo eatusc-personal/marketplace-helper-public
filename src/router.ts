@@ -3,15 +3,12 @@
 
 import {
   detectPlatform,
-  initializeContentScript,
-  addTestElement
+  initializeContentScript
 } from './shared/utils';
-
-
+import { debugLog } from './shared/debug';
 
 // Initialize the content script
 const currentPlatform = detectPlatform(window.location.href);
 initializeContentScript(currentPlatform);
 
-console.log(`[DD] 🎉 ${currentPlatform} content script initialization complete!`);
-addTestElement();
+debugLog(`[DD] ${currentPlatform} content script initialization complete`);
