@@ -1,3 +1,5 @@
+![Marketplace Helper header artwork](assets/marketplace-helper-header.svg)
+
 # Marketplace Helper
 
 [![CI](https://github.com/eatusc/marketplace-helper-public/actions/workflows/ci.yml/badge.svg)](https://github.com/eatusc/marketplace-helper-public/actions/workflows/ci.yml)
