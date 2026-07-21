@@ -7,6 +7,7 @@ import DragDropUpload from './DragDropUpload';
 import LocationComboBox from './LocationComboBox';
 import { detectCurrentPlatform, processCategoriesWithPlatforms, Platform } from '../utils/platformUtils';
 import { useAuth } from '../contexts/AuthContext';
+import { debugLog } from '../../src/shared/debug';
 
 interface CreateListingFormProps {
   isEditing: boolean;
@@ -450,7 +451,7 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
         // Detect current platform
         const platform = await detectCurrentPlatform();
         setCurrentPlatform(platform);
-        console.log('🔍 Detected platform:', platform);
+        debugLog('🔍 Detected platform:', platform);
 
         // Load categories with category types in a single query
         const { data: categoriesData, error: categoriesError } = await supabase
@@ -506,7 +507,7 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
         // Process categories with platform filtering and duplicate handling
         const processed = processCategoriesWithPlatforms(categoriesData || [], platform);
         setProcessedCategories(processed);
-        console.log(`🔍 Processed ${processed.length} categories for platform:`, platform);
+        debugLog(`🔍 Processed ${processed.length} categories for platform:`, platform);
 
         // Load conditions
         const { data: conditionsData, error: conditionsError } = await supabase
@@ -535,7 +536,7 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
   // Set form data when editing
   useEffect(() => {
     if (isEditing && editingListing && categories.length > 0 && conditions.length > 0) {
-      console.log('🔍 EDIT LOAD DEBUG: Setting edit form data:', {
+      debugLog('🔍 EDIT LOAD DEBUG: Setting edit form data:', {
         editingListing,
         categoriesLength: categories.length,
         conditionsLength: conditions.length
@@ -584,7 +585,7 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
       const selectedCategory = categories.find(cat => cat.id === editingListing.fb_category_id || cat.id === editingListing.nd_category_id);
       const selectedCondition = conditions.find(cond => cond.id === editingListing.condition_id);
 
-      console.log('🔍 Found category/condition for edit:', {
+      debugLog('🔍 Found category/condition for edit:', {
         selectedCategory,
         selectedCondition,
         fb_category_id: editingListing.fb_category_id,
@@ -648,7 +649,7 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
   };
 
   const handleComboBoxChange = (value: string, name: string) => {
-    console.log('🔍 COMBO DEBUG: handleComboBoxChange called:', { value, name });
+    debugLog('🔍 COMBO DEBUG: handleComboBoxChange called:', { value, name });
     addDebugLog?.(`🔍 COMBO DEBUG: handleComboBoxChange called: ${name} = ${value}`);
 
     if (name === 'main_category') {
@@ -673,7 +674,7 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
         category_id: ''
       }));
     } else if (name === 'fb_category_id') {
-      console.log('🔍 COMBO DEBUG: Facebook category selection:', { value, name });
+      debugLog('🔍 COMBO DEBUG: Facebook category selection:', { value, name });
       addDebugLog?.(`🔍 COMBO DEBUG: Facebook category selection: value=${value}, name=${name}`);
 
       // Find the selected Facebook category
@@ -689,7 +690,7 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
         fb_category_id: categoryId
       }));
     } else if (name === 'nd_category_id') {
-      console.log('🔍 COMBO DEBUG: Nextdoor category selection:', { value, name });
+      debugLog('🔍 COMBO DEBUG: Nextdoor category selection:', { value, name });
       addDebugLog?.(`🔍 COMBO DEBUG: Nextdoor category selection: value=${value}, name=${name}`);
 
       // Find the selected Nextdoor category
@@ -705,7 +706,7 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
         nd_category_id: categoryId
       }));
 
-      console.log('🔍 Category selection completed:', { value, categoryId, selectedCategory });
+      debugLog('🔍 Category selection completed:', { value, categoryId, selectedCategory });
       addDebugLog?.(`🔍 COMBOBOX DEBUG: Category formData updated with ID: ${categoryId}`);
     } else if (name === 'cl_category_id') {
       addDebugLog?.(`🔍 COMBO DEBUG: Craigslist category selection: value=${value}, name=${name}`);
@@ -713,14 +714,14 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
       const categoryId = selectedCategory?.id || value;
       setFormData(prev => ({ ...prev, cl_category_id: categoryId }));
     } else if (name === 'condition_id') {
-      console.log('🔍 COMBO DEBUG: Condition selection starting:', { value, name });
+      debugLog('🔍 COMBO DEBUG: Condition selection starting:', { value, name });
       // For condition, value could be ID or name depending on selection method
       const selectedCondition = conditions.find(cond => cond.id === value || cond.name === value);
       const conditionName = selectedCondition?.name || value;
       const conditionId = selectedCondition?.id || value; // Use value as fallback for custom entries
 
       addDebugLog?.(`🔍 COMBO DEBUG: Condition selected: ${conditionName} (ID: ${conditionId})`);
-      console.log('🔍 COMBO DEBUG: Condition lookup result:', {
+      debugLog('🔍 COMBO DEBUG: Condition lookup result:', {
         inputValue: value,
         foundCondition: selectedCondition,
         finalName: conditionName,
@@ -734,11 +735,11 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
           ...prev,
           condition_id: conditionId
         };
-        console.log('🔍 COMBO DEBUG: FormData updated for condition:', newFormData);
+        debugLog('🔍 COMBO DEBUG: FormData updated for condition:', newFormData);
         return newFormData;
       });
 
-      console.log('🔍 Condition selection completed:', { value, conditionId, selectedCondition });
+      debugLog('🔍 Condition selection completed:', { value, conditionId, selectedCondition });
       addDebugLog?.(`🔍 COMBOBOX DEBUG: Condition formData updated with ID: ${conditionId}`);
     } else {
       setFormData(prev => ({
@@ -816,12 +817,12 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
   {/* Video drag and drop handler - commented out, may be added back in the future */}
   /*
   const handleVideoDragDrop = (files: FileList | null) => {
-    console.log('🎥 VIDEO DEBUG: handleVideoDragDrop called with files:', files);
+    debugLog('🎥 VIDEO DEBUG: handleVideoDragDrop called with files:', files);
     addDebugLog?.(`🎥 VIDEO DEBUG: handleVideoDragDrop called with ${files?.length || 0} files`);
 
     if (files && files.length > 0) {
       const file = files[0]; // Only take the first video file
-      console.log('🎥 VIDEO DEBUG: Processing video file:', {
+      debugLog('🎥 VIDEO DEBUG: Processing video file:', {
         name: file.name,
         type: file.type,
         size: file.size,
@@ -841,7 +842,7 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
           const dataUrl = e.target?.result as string;
           if (dataUrl) {
             setVideoPreviewUrl(dataUrl);
-            console.log('✅ Video preview created');
+            debugLog('✅ Video preview created');
             addDebugLog?.(`✅ Video preview created for: ${file.name}`);
           }
         };
@@ -851,11 +852,11 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
         };
         reader.readAsDataURL(file);
       } else {
-        console.log('🎥 VIDEO DEBUG: File is not a video type');
+        debugLog('🎥 VIDEO DEBUG: File is not a video type');
         addDebugLog?.(`🎥 VIDEO DEBUG: File is not a video type: ${file.type}`);
       }
     } else {
-      console.log('🎥 VIDEO DEBUG: No files provided or empty file list');
+      debugLog('🎥 VIDEO DEBUG: No files provided or empty file list');
       addDebugLog?.('🎥 VIDEO DEBUG: No files provided or empty file list');
     }
   };
@@ -863,14 +864,14 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
 
   // Photo management functions
   const removePhoto = (index: number) => {
-    console.log('🗑️ Removing photo at index:', index);
+    debugLog('🗑️ Removing photo at index:', index);
     addDebugLog?.(`🗑️ Removing photo at index: ${index}`);
 
     setFormData(prev => {
       const photos = prev.photos ? Array.from(prev.photos) : [];
       const newPhotos = photos.filter((_, i) => i !== index);
 
-      console.log('🗑️ Photo removal result:', {
+      debugLog('🗑️ Photo removal result:', {
         originalCount: photos.length,
         newCount: newPhotos.length,
         removedIndex: index
@@ -886,7 +887,7 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
     // Remove corresponding preview URL
     setPhotoPreviewUrls(prev => {
       const newUrls = prev.filter((_, i) => i !== index);
-      console.log('🗑️ Preview URL removal:', {
+      debugLog('🗑️ Preview URL removal:', {
         originalCount: prev.length,
         newCount: newUrls.length,
         removedIndex: index
@@ -896,7 +897,7 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
   };
 
   const movePhoto = (fromIndex: number, toIndex: number) => {
-    console.log('🔄 Moving photo from index', fromIndex, 'to index', toIndex);
+    debugLog('🔄 Moving photo from index', fromIndex, 'to index', toIndex);
     addDebugLog?.(`🔄 Moving photo from index ${fromIndex} to index ${toIndex}`);
 
     setFormData(prev => {
@@ -905,7 +906,7 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
       const [movedPhoto] = newPhotos.splice(fromIndex, 1);
       newPhotos.splice(toIndex, 0, movedPhoto);
 
-      console.log('🔄 Photo reorder result:', {
+      debugLog('🔄 Photo reorder result:', {
         originalCount: photos.length,
         newCount: newPhotos.length,
         fromIndex,
@@ -924,7 +925,7 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
       const photos = prev.photos ? Array.from(prev.photos) : [];
       if (photos.length > 0) {
         const regeneratePreviews = async () => {
-          console.log('🔄 Regenerating preview URLs after reorder');
+          debugLog('🔄 Regenerating preview URLs after reorder');
           addDebugLog?.('🔄 Regenerating preview URLs after reorder');
 
           // Clean up existing blob URLs
@@ -985,10 +986,10 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
               for (const technique of techniques) {
                 try {
                   const result = await technique.fn(file);
-                  console.log(`✅ Regenerated preview using ${technique.name} technique for ${file.name}`);
+                  debugLog(`✅ Regenerated preview using ${technique.name} technique for ${file.name}`);
                   return result;
                 } catch (error) {
-                  console.log(`❌ ${technique.name} technique failed for ${file.name}:`, error);
+                  debugLog(`❌ ${technique.name} technique failed for ${file.name}:`, error);
                 }
               }
               throw new Error('All preview techniques failed');
@@ -1004,7 +1005,7 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
             );
 
             const newUrls = results.filter(url => url !== null) as string[];
-            console.log(`✅ Regenerated ${newUrls.length} preview URLs`);
+            debugLog(`✅ Regenerated ${newUrls.length} preview URLs`);
             addDebugLog?.(`✅ Regenerated ${newUrls.length} preview URLs after reorder`);
 
             setPhotoPreviewUrls(newUrls);
@@ -1022,7 +1023,7 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
 
   // Existing photo reordering functions
   const moveExistingPhoto = async (fromIndex: number, toIndex: number) => {
-    console.log('🔄 Moving existing photo from index', fromIndex, 'to index', toIndex);
+    debugLog('🔄 Moving existing photo from index', fromIndex, 'to index', toIndex);
     addDebugLog?.(`🔄 Moving existing photo from index ${fromIndex} to index ${toIndex}`);
 
     if (!isEditing || !editingListing) {
@@ -1037,7 +1038,7 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
       const [movedPhoto] = newPhotos.splice(fromIndex, 1);
       newPhotos.splice(toIndex, 0, movedPhoto);
 
-      console.log('🔄 Existing photo reorder result:', {
+      debugLog('🔄 Existing photo reorder result:', {
         originalCount: editingPhotos.length,
         newCount: newPhotos.length,
         fromIndex,
@@ -1069,7 +1070,7 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
         setMessage('❌ Failed to save photo order. Please try again.');
         setMessageType('error');
       } else {
-        console.log('✅ Successfully updated photo positions in database');
+        debugLog('✅ Successfully updated photo positions in database');
         addDebugLog?.('✅ Successfully updated photo positions in database');
         setMessage('✅ Photo order updated successfully!');
         setMessageType('success');
@@ -1107,7 +1108,7 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
       const fileName = pathParts[pathParts.length - 1];
       const filePath = `photos/${fileName}`;
 
-      console.log('🗑️ Deleting photo:', {
+      debugLog('🗑️ Deleting photo:', {
         photoId: photo.id,
         photoUrl: photo.photo_url,
         extractedFilePath: filePath
@@ -1122,7 +1123,7 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
         console.error('❌ Storage deletion error:', storageError);
         // Continue with database deletion even if storage fails
       } else {
-        console.log('✅ Photo deleted from storage successfully');
+        debugLog('✅ Photo deleted from storage successfully');
       }
 
       // Delete from database
@@ -1135,7 +1136,7 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
         throw new Error(`Failed to delete photo from database: ${dbError.message}`);
       }
 
-      console.log('✅ Photo deleted from database successfully');
+      debugLog('✅ Photo deleted from database successfully');
 
       // Update local state by removing the deleted photo
       setEditingPhotos(prevPhotos =>
@@ -1276,7 +1277,7 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
       throw new Error('User must be authenticated to create listings');
     }
 
-          console.log('🔍 Creating listing with:', {
+          debugLog('🔍 Creating listing with:', {
         title,
         fbCategoryId,
         ndCategoryId,
@@ -1421,7 +1422,7 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
         for (let i = 0; i < formData.photos.length; i++) {
           const file = formData.photos[i];
 
-          console.log(`🔄 CREATE DEBUG: Processing photo ${i + 1}/${formData.photos.length}:`, {
+          debugLog(`🔄 CREATE DEBUG: Processing photo ${i + 1}/${formData.photos.length}:`, {
             fileName: file.name,
             fileType: file.type,
             fileSize: file.size
@@ -1429,20 +1430,20 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
           addDebugLog?.(`🔄 CREATE DEBUG: Processing photo ${i + 1}/${formData.photos.length}: ${file.name} (${file.type}, ${file.size} bytes)`);
 
           try {
-            console.log(`🎯 CREATE DEBUG: Step 1 - Uploading photo ${i + 1} to storage...`);
+            debugLog(`🎯 CREATE DEBUG: Step 1 - Uploading photo ${i + 1} to storage...`);
             addDebugLog?.(`🎯 CREATE DEBUG: Step 1 - Uploading photo ${i + 1} to storage...`);
 
             const photoUrl = await uploadPhotoToStorage(file);
 
-            console.log(`✅ CREATE DEBUG: Step 1 complete - Photo ${i + 1} uploaded to storage:`, photoUrl);
+            debugLog(`✅ CREATE DEBUG: Step 1 complete - Photo ${i + 1} uploaded to storage:`, photoUrl);
             addDebugLog?.(`✅ CREATE DEBUG: Step 1 complete - Photo ${i + 1} uploaded to storage: ${photoUrl}`);
 
-            console.log(`🎯 CREATE DEBUG: Step 2 - Creating database record for photo ${i + 1}...`);
+            debugLog(`🎯 CREATE DEBUG: Step 2 - Creating database record for photo ${i + 1}...`);
             addDebugLog?.(`🎯 CREATE DEBUG: Step 2 - Creating database record for photo ${i + 1}...`);
 
             await insertPhotoRecord(listing.id, photoUrl, i + 1);
 
-            console.log(`✅ CREATE DEBUG: All steps complete - Photo ${i + 1} fully processed!`);
+            debugLog(`✅ CREATE DEBUG: All steps complete - Photo ${i + 1} fully processed!`);
             addDebugLog?.(`✅ CREATE DEBUG: All steps complete - Photo ${i + 1} fully processed!`);
 
             photoUploadResults.push(`✅ Photo ${i + 1} uploaded successfully`);
@@ -1486,12 +1487,12 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
   const handleUpdateListing = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log('🔍 SAVE BUTTON CLICKED: handleUpdateListing called');
+    debugLog('🔍 SAVE BUTTON CLICKED: handleUpdateListing called');
     addDebugLog?.('🔍 SAVE BUTTON CLICKED: handleUpdateListing called');
     addDebugLog?.(`🔍 EDIT SUBMIT: editingListing exists: ${!!editingListing}`);
 
     // Debug: Check if photos are selected
-    console.log('📷 SAVE DEBUG: Checking photos before processing:', {
+    debugLog('📷 SAVE DEBUG: Checking photos before processing:', {
       hasPhotos: !!(formData.photos && formData.photos.length > 0),
       photoCount: formData.photos?.length || 0,
       photosObject: formData.photos
@@ -1538,17 +1539,17 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
       if (hasPhotos && formData.photos) message += `\nand uploading ${formData.photos.length} photos`;
       if (hasVideo) message += `\nand uploading video`;
       message += '...';
-      console.log('🔍 MESSAGE DEBUG: Setting update message with photos:', message);
+      debugLog('🔍 MESSAGE DEBUG: Setting update message with photos:', message);
       setMessage(message);
       setMessageType('');
     } else {
-      console.log('🔍 MESSAGE DEBUG: Setting update message without photos');
+      debugLog('🔍 MESSAGE DEBUG: Setting update message without photos');
       setMessage('🔄 Updating listing...');
       setMessageType('');
     }
 
     try {
-      console.log('🔍 EDIT DEBUG: Full form state before update:', {
+      debugLog('🔍 EDIT DEBUG: Full form state before update:', {
         formData,
         selectedCategoryName,
         selectedConditionName,
@@ -1581,7 +1582,7 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
       // Additional debugging to verify category/condition resolution
       if (selectedCategoryName) {
         const foundCategory = categories.find(cat => cat.name === selectedCategoryName);
-        console.log('🔍 EDIT DEBUG: Category lookup:', {
+        debugLog('🔍 EDIT DEBUG: Category lookup:', {
           selectedCategoryName,
           foundCategory,
           formDataFbCategoryId: formData.fb_category_id,
@@ -1592,7 +1593,7 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
 
       if (selectedConditionName) {
         const foundCondition = conditions.find(cond => cond.name === selectedConditionName);
-        console.log('🔍 EDIT DEBUG: Condition lookup:', {
+        debugLog('🔍 EDIT DEBUG: Condition lookup:', {
           selectedConditionName,
           foundCondition,
           formDataConditionId: formData.condition_id,
@@ -1634,7 +1635,7 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
         addDebugLog?.(`🎥 VIDEO DEBUG: Adding video_url to update data: ${videoUrl}`);
       }
 
-      console.log('🔍 EDIT DEBUG: Update data being sent to database:', updateData);
+      debugLog('🔍 EDIT DEBUG: Update data being sent to database:', updateData);
       addDebugLog?.('🔍 EDIT SAVE DEBUG: Update data being sent to database');
       addDebugLog?.(`🔍 EDIT SAVE: updateData.fb_category_id = ${updateData.fb_category_id}`);
       addDebugLog?.(`🔍 EDIT SAVE: updateData.nd_category_id = ${updateData.nd_category_id}`);
@@ -1650,7 +1651,7 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
       }
 
       // Handle photo uploads if any
-      console.log('📷 UPLOAD CHECK: Checking for photos to upload:', {
+      debugLog('📷 UPLOAD CHECK: Checking for photos to upload:', {
         hasPhotos: !!(formData.photos && formData.photos.length > 0),
         photoCount: formData.photos?.length || 0,
         photosType: typeof formData.photos,
@@ -1671,14 +1672,14 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
       }
 
       if (formData.photos && formData.photos.length > 0) {
-        console.log('📷 UPLOAD START: Starting photo upload process...');
+        debugLog('📷 UPLOAD START: Starting photo upload process...');
         addDebugLog?.('📷 UPLOAD START: Starting photo upload process...');
         const photoUploadResults = [];
 
         for (let i = 0; i < formData.photos.length; i++) {
           const file = formData.photos[i];
 
-          console.log(`🔄 UPLOAD DEBUG: Processing photo ${i + 1}/${formData.photos.length}:`, {
+          debugLog(`🔄 UPLOAD DEBUG: Processing photo ${i + 1}/${formData.photos.length}:`, {
             fileName: file.name,
             fileType: file.type,
             fileSize: file.size
@@ -1686,15 +1687,15 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
           addDebugLog?.(`🔄 UPLOAD DEBUG: Processing photo ${i + 1}/${formData.photos.length}: ${file.name} (${file.type}, ${file.size} bytes)`);
 
           try {
-            console.log(`🎯 UPLOAD DEBUG: Step 1 - Uploading photo ${i + 1} to storage...`);
+            debugLog(`🎯 UPLOAD DEBUG: Step 1 - Uploading photo ${i + 1} to storage...`);
             addDebugLog?.(`🎯 UPLOAD DEBUG: Step 1 - Uploading photo ${i + 1} to storage...`);
 
             const photoUrl = await uploadPhotoToStorage(file);
 
-            console.log(`✅ UPLOAD DEBUG: Step 1 complete - Photo ${i + 1} uploaded to storage:`, photoUrl);
+            debugLog(`✅ UPLOAD DEBUG: Step 1 complete - Photo ${i + 1} uploaded to storage:`, photoUrl);
             addDebugLog?.(`✅ UPLOAD DEBUG: Step 1 complete - Photo ${i + 1} uploaded to storage: ${photoUrl}`);
 
-            console.log(`🎯 UPLOAD DEBUG: Step 2 - Creating database record for photo ${i + 1}...`);
+            debugLog(`🎯 UPLOAD DEBUG: Step 2 - Creating database record for photo ${i + 1}...`);
             addDebugLog?.(`🎯 UPLOAD DEBUG: Step 2 - Creating database record for photo ${i + 1}...`);
 
             // Calculate position: existing photos count + current photo index + 1
@@ -1702,7 +1703,7 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
             const newPosition = existingPhotosCount + i + 1;
             await insertPhotoRecord(editingListing.id, photoUrl, newPosition);
 
-            console.log(`✅ UPLOAD DEBUG: All steps complete - Photo ${i + 1} fully processed!`);
+            debugLog(`✅ UPLOAD DEBUG: All steps complete - Photo ${i + 1} fully processed!`);
             addDebugLog?.(`✅ UPLOAD DEBUG: All steps complete - Photo ${i + 1} fully processed!`);
 
             photoUploadResults.push(`✅ Photo ${i + 1} uploaded successfully`);
@@ -1998,7 +1999,7 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
           addDebugLog={addDebugLog}
           onFilesSelected={async (files) => {
             if (files && files.length > 0) {
-              console.log('📷 Files received:', files.length);
+              debugLog('📷 Files received:', files.length);
               addDebugLog?.(`📷 Files received: ${files.length}`);
 
               // Debug: Log details of each file received
@@ -2015,7 +2016,7 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
                 const message = `❌ File(s) too large (max 4MB): ${fileNames}. Please resize or compress your images.`;
                 setMessage(message);
                 setMessageType('error');
-                console.log('📷 SIZE CHECK: Files too large:', oversizedFiles.map(f => ({ name: f.name, size: f.size })));
+                debugLog('📷 SIZE CHECK: Files too large:', oversizedFiles.map(f => ({ name: f.name, size: f.size })));
                 addDebugLog?.(`📷 SIZE CHECK: ${oversizedFiles.length} files exceed 4MB limit`);
                 return; // Don't process oversized files
               }
@@ -2026,7 +2027,7 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
                 const existingPhotos = prev.photos ? Array.from(prev.photos) : [];
                 const allPhotos = [...existingPhotos, ...newFiles];
 
-                console.log('📷 STORE DEBUG: Adding files to formData:', {
+                debugLog('📷 STORE DEBUG: Adding files to formData:', {
                   existingCount: existingPhotos.length,
                   newCount: newFiles.length,
                   totalCount: allPhotos.length,
@@ -2124,14 +2125,14 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
 
                     for (const technique of techniques) {
                       try {
-                        console.log(`📷 PREVIEW DEBUG: Trying ${technique.name} technique for ${file.name}`);
+                        debugLog(`📷 PREVIEW DEBUG: Trying ${technique.name} technique for ${file.name}`);
                         addDebugLog?.(`📷 PREVIEW DEBUG: Trying ${technique.name} technique for ${file.name}`);
                         const result = await technique.fn(file);
-                        console.log(`✅ PREVIEW DEBUG: ${technique.name} technique succeeded for ${file.name}`);
+                        debugLog(`✅ PREVIEW DEBUG: ${technique.name} technique succeeded for ${file.name}`);
                         addDebugLog?.(`✅ PREVIEW DEBUG: ${technique.name} technique succeeded for ${file.name}`);
                         return result;
                       } catch (error) {
-                        console.log(`❌ PREVIEW DEBUG: ${technique.name} technique failed for ${file.name}:`, error);
+                        debugLog(`❌ PREVIEW DEBUG: ${technique.name} technique failed for ${file.name}:`, error);
                         addDebugLog?.(`❌ PREVIEW DEBUG: ${technique.name} technique failed for ${file.name}: ${error}`);
                       }
                     }
@@ -2150,7 +2151,7 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
                   );
 
                   const newUrls = results.filter((url): url is string => url !== null);
-                  console.log(`📷 PREVIEW DEBUG: Generated ${newUrls.length} preview URLs for regular files`);
+                  debugLog(`📷 PREVIEW DEBUG: Generated ${newUrls.length} preview URLs for regular files`);
                   addDebugLog?.(`📷 PREVIEW DEBUG: Generated ${newUrls.length} preview URLs for regular files`);
 
                   // Add new previews to existing ones
@@ -2162,7 +2163,7 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
               }
 
 
-              console.log('📷 Processing', files.length, 'new files');
+              debugLog('📷 Processing', files.length, 'new files');
               addDebugLog?.(`📷 Processing ${files.length} new files`);
             }
           }}
@@ -2195,7 +2196,7 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
                   onDragStart={(e) => {
                     e.dataTransfer.setData('text/plain', index.toString());
                     e.dataTransfer.effectAllowed = 'move';
-                    console.log('🔄 Drag start for existing photo at index:', index);
+                    debugLog('🔄 Drag start for existing photo at index:', index);
                     addDebugLog?.(`🔄 Drag start for existing photo at index: ${index}`);
                   }}
                   onDragOver={(e) => {
@@ -2208,7 +2209,7 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
                     const toIndex = index;
 
                     if (fromIndex !== toIndex) {
-                      console.log('🔄 Drop detected: moving from index', fromIndex, 'to index', toIndex);
+                      debugLog('🔄 Drop detected: moving from index', fromIndex, 'to index', toIndex);
                       addDebugLog?.(`🔄 Drop detected: moving from index ${fromIndex} to index ${toIndex}`);
                       moveExistingPhoto(fromIndex, toIndex);
                     }
@@ -2325,7 +2326,7 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
                   onDragStart={(e) => {
                     e.dataTransfer.setData('text/plain', index.toString());
                     e.dataTransfer.effectAllowed = 'move';
-                    console.log('🔄 Drag start for new photo at index:', index);
+                    debugLog('🔄 Drag start for new photo at index:', index);
                     addDebugLog?.(`🔄 Drag start for new photo at index: ${index}`);
                   }}
                   onDragOver={(e) => {
@@ -2338,7 +2339,7 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
                     const toIndex = index;
 
                     if (fromIndex !== toIndex) {
-                      console.log('🔄 Drop detected: moving from index', fromIndex, 'to index', toIndex);
+                      debugLog('🔄 Drop detected: moving from index', fromIndex, 'to index', toIndex);
                       addDebugLog?.(`🔄 Drop detected: moving from index ${fromIndex} to index ${toIndex}`);
                       movePhoto(fromIndex, toIndex);
                     }
@@ -2444,7 +2445,7 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
                             img.parentNode?.appendChild(fallback);
                           }}
                           onLoad={() => {
-                            console.log('📷 PREVIEW SUCCESS: Preview image loaded for index', index, 'URL type:', url.startsWith('blob:') ? 'blob' : url.startsWith('data:') ? 'data' : 'unknown');
+                            debugLog('📷 PREVIEW SUCCESS: Preview image loaded for index', index, 'URL type:', url.startsWith('blob:') ? 'blob' : url.startsWith('data:') ? 'data' : 'unknown');
                             addDebugLog?.(`📷 PREVIEW SUCCESS: Preview image loaded for index ${index} - URL type: ${url.startsWith('blob:') ? 'blob' : url.startsWith('data:') ? 'data' : 'unknown'}`);
                           }}
                         />
@@ -2519,11 +2520,11 @@ const CreateListingForm: React.FC<CreateListingFormProps> = ({
                 muted
                 style={{ width: '100%', maxHeight: '120px' }}
                 onLoadStart={() => {
-                  console.log('🎥 VIDEO DEBUG: Video element starting to load');
+                  debugLog('🎥 VIDEO DEBUG: Video element starting to load');
                   addDebugLog?.('🎥 VIDEO DEBUG: Video element starting to load');
                 }}
                 onLoadedData={() => {
-                  console.log('🎥 VIDEO DEBUG: Video data loaded successfully');
+                  debugLog('🎥 VIDEO DEBUG: Video data loaded successfully');
                   addDebugLog?.('🎥 VIDEO DEBUG: Video data loaded successfully');
                 }}
                 onError={(e) => {

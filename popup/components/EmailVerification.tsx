@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../../src/supabase';
+import { debugLog } from '../../src/shared/debug';
 
 const EmailVerification: React.FC = () => {
   const { setError } = useAuth();
@@ -28,7 +29,7 @@ const EmailVerification: React.FC = () => {
         const expiresIn = params.get('expires_in');
         const type = params.get('type');
 
-        console.log('Email verification params:', {
+        debugLog('Email verification params:', {
           accessToken: !!accessToken,
           refreshToken: !!refreshToken,
           tokenType,

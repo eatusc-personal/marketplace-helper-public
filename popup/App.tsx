@@ -7,6 +7,7 @@ import DebugPanel from './components/DebugPanel';
 import { Listing } from './types';
 import { useAuth } from './contexts/AuthContext';
 import { signOut } from '../src/auth';
+import { debugLog } from '../src/shared/debug';
 
 type TabType = 'create' | 'view';
 
@@ -22,7 +23,7 @@ const AppContent: React.FC = () => {
     const timestamp = new Date().toLocaleTimeString();
     const logEntry = `[${timestamp}] ${message}`;
     setDebugLogs(prev => [...prev.slice(-50), logEntry]); // Keep last 50 logs
-    console.log(message); // Also log to browser console
+    debugLog(message); // Also log to browser console
   };
 
 
@@ -31,7 +32,7 @@ const AppContent: React.FC = () => {
 
 
   const handleEditListing = (listing: Listing) => {
-    console.log('🔍 APP.TSX: handleEditListing called with:', listing);
+    debugLog('🔍 APP.TSX: handleEditListing called with:', listing);
     addDebugLog(`🔍 APP.TSX: handleEditListing called with: ${listing.title}`);
     addDebugLog(`🔍 APP.TSX: Setting editingListing with fb_category_id=${listing.fb_category_id}, nd_category_id=${listing.nd_category_id}, condition_id=${listing.condition_id}`);
     setEditingListing(listing);
@@ -88,17 +89,19 @@ const AppContent: React.FC = () => {
                 Sign Out
               </button>
             </div>
-            <button
-              className="debug-toggle"
-              onClick={() => setShowDebugPanel(!showDebugPanel)}
-            >
-              {showDebugPanel ? '🔽 Hide Debug' : '🔼 Show Debug'}
-            </button>
+            {import.meta.env.DEV && (
+              <button
+                className="debug-toggle"
+                onClick={() => setShowDebugPanel(!showDebugPanel)}
+              >
+                {showDebugPanel ? 'Hide Debug' : 'Show Debug'}
+              </button>
+            )}
           </div>
         </div>
       </div>
 
-      {showDebugPanel && (
+      {import.meta.env.DEV && showDebugPanel && (
         <DebugPanel
           debugLogs={debugLogs}
           onClearLogs={handleClearLogs}

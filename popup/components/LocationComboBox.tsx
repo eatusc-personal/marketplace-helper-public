@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { supabase } from '../../src/supabase';
+import { debugLog } from '../../src/shared/debug';
 
 interface Location {
   id: string;
@@ -39,7 +40,7 @@ const LocationComboBox: React.FC<LocationComboBoxProps> = ({
 
   // Debug component mount
   useEffect(() => {
-    console.log('🔍 DEBUG: LocationComboBox mounted with props:', { id, name, value, placeholder, disabled });
+    debugLog('🔍 DEBUG: LocationComboBox mounted with props:', { id, name, value, placeholder, disabled });
   }, []);
 
   // Load existing locations from database
@@ -103,7 +104,7 @@ const LocationComboBox: React.FC<LocationComboBoxProps> = ({
   // Look up ZIP code by city name using geocoding API
   const getZipCodeFromCity = async (cityName: string): Promise<string | null> => {
     try {
-      console.log(`🔍 Looking up ZIP code for city: "${cityName}"`);
+      debugLog(`🔍 Looking up ZIP code for city: "${cityName}"`);
 
       // Use Nominatim to search for the city
       const encodedCity = encodeURIComponent(`${cityName}, USA`);
@@ -128,13 +129,13 @@ const LocationComboBox: React.FC<LocationComboBoxProps> = ({
         for (const result of data) {
           const zipCode = result.address?.postcode;
           if (zipCode) {
-            console.log(`✅ Found ZIP code via geocoding: ${zipCode} for city: "${cityName}"`);
+            debugLog(`✅ Found ZIP code via geocoding: ${zipCode} for city: "${cityName}"`);
             return zipCode;
           }
         }
       }
 
-      console.log(`⚠️ No ZIP code found for city: "${cityName}"`);
+      debugLog(`⚠️ No ZIP code found for city: "${cityName}"`);
       return null;
     } catch (error) {
       console.error(`❌ Error looking up ZIP code for city "${cityName}":`, error);
@@ -202,7 +203,7 @@ const LocationComboBox: React.FC<LocationComboBoxProps> = ({
 
   // Detect user's location
   const detectLocation = async () => {
-    console.log('🔍 DEBUG: Detect location button clicked');
+    debugLog('🔍 DEBUG: Detect location button clicked');
 
     if (!navigator.geolocation) {
       console.error('Geolocation is not supported');
@@ -210,7 +211,7 @@ const LocationComboBox: React.FC<LocationComboBoxProps> = ({
     }
 
     setIsDetectingLocation(true);
-    console.log('🔍 DEBUG: Starting geolocation detection...');
+    debugLog('🔍 DEBUG: Starting geolocation detection...');
 
     try {
       const position = await new Promise<GeolocationPosition>((resolve, reject) => {
@@ -222,28 +223,28 @@ const LocationComboBox: React.FC<LocationComboBoxProps> = ({
       });
 
       const { latitude, longitude } = position.coords;
-      console.log('🔍 DEBUG: Got coordinates:', { latitude, longitude });
+      debugLog('🔍 DEBUG: Got coordinates:', { latitude, longitude });
 
       const result = await reverseGeocode(latitude, longitude);
-      console.log('🔍 DEBUG: Reverse geocoding result:', result);
+      debugLog('🔍 DEBUG: Reverse geocoding result:', result);
 
       if (result.location) {
         setDetectedLocation(result.location);
         setInputValue(result.location);
         onChange(result.location);
-        console.log('🔍 DEBUG: Location set successfully:', result.location);
+        debugLog('🔍 DEBUG: Location set successfully:', result.location);
 
         // Update zipcode if available
         if (result.zipCode && onZipCodeChange) {
-          console.log('🔍 DEBUG: Setting ZIP code:', result.zipCode);
+          debugLog('🔍 DEBUG: Setting ZIP code:', result.zipCode);
           onZipCodeChange(result.zipCode);
         } else if (!result.zipCode && result.location) {
           // Try to look up ZIP code by city name
           const cityName = result.location.split(',')[0].trim();
-          console.log('🔍 DEBUG: No ZIP code from geocoding, trying city lookup for:', cityName);
+          debugLog('🔍 DEBUG: No ZIP code from geocoding, trying city lookup for:', cityName);
           const zipCode = await getZipCodeFromCity(cityName);
           if (zipCode && onZipCodeChange) {
-            console.log('🔍 DEBUG: Found ZIP code via city lookup:', zipCode);
+            debugLog('🔍 DEBUG: Found ZIP code via city lookup:', zipCode);
             onZipCodeChange(zipCode);
           }
         }
@@ -252,7 +253,7 @@ const LocationComboBox: React.FC<LocationComboBoxProps> = ({
       console.error('🔍 DEBUG: Location detection failed:', error);
     } finally {
       setIsDetectingLocation(false);
-      console.log('🔍 DEBUG: Location detection finished');
+      debugLog('🔍 DEBUG: Location detection finished');
     }
   };
 
@@ -301,7 +302,7 @@ const LocationComboBox: React.FC<LocationComboBoxProps> = ({
   };
 
   useEffect(() => {
-    console.log('🔍 DEBUG: LocationComboBox value changed:', value);
+    debugLog('🔍 DEBUG: LocationComboBox value changed:', value);
     setInputValue(value);
   }, [value]);
 
@@ -331,7 +332,7 @@ const LocationComboBox: React.FC<LocationComboBoxProps> = ({
   };
 
   const handleDetectLocationClick = () => {
-    console.log('🔍 DEBUG: Location detect button clicked');
+    debugLog('🔍 DEBUG: Location detect button clicked');
     detectLocation();
   };
 

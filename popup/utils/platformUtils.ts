@@ -1,4 +1,5 @@
 import { Category, CategoryWithPlatform } from '../types';
+import { debugLog } from '../../src/shared/debug';
 
 // Platform detection
 export type Platform = 'facebook' | 'nextdoor' | 'craigslist' | 'other';
@@ -23,7 +24,7 @@ export function detectCurrentPlatform(): Promise<Platform> {
     return new Promise((resolve) => {
       chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         const url = tabs[0]?.url || '';
-        console.log('🔍 Detecting platform from URL:', url);
+        debugLog('🔍 Detecting platform from URL:', url);
 
         resolve(platformFromUrl(url));
       });

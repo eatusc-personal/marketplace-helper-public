@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../../src/supabase';
 import { Listing } from '../types';
 import ComboBox from './ComboBox';
+import { debugLog } from '../../src/shared/debug';
 
 /** --- Drag-&-Drop helpers --- */
 const MIME_MAP: Record<string,string> = {
@@ -51,7 +52,7 @@ interface ExpandedPhotos {
 }
 
 const Lightbox: React.FC<LightboxProps> = ({ isOpen, imageUrl, onClose }) => {
-  console.log('🔍 Lightbox render:', { isOpen, imageUrl });
+  debugLog('🔍 Lightbox render:', { isOpen, imageUrl });
 
   if (!isOpen) return null;
 
@@ -95,13 +96,13 @@ const ViewListings: React.FC<ViewListingsProps> = ({ onEditListing, addDebugLog 
     try {
       // Debug: Check current session
       const { data: { session } } = await supabase.auth.getSession();
-      console.log('🔍 DEBUG: Current session in loadListings:', session?.user?.email);
+      debugLog('🔍 DEBUG: Current session in loadListings:', session?.user?.email);
       addDebugLog?.(`🔍 DEBUG: Current session: ${session?.user?.email || 'No session'}`);
 
       // Ensure session is set in the client
       if (session) {
         await supabase.auth.setSession(session);
-        console.log('🔍 DEBUG: Session set in client');
+        debugLog('🔍 DEBUG: Session set in client');
         addDebugLog?.('🔍 DEBUG: Session set in client');
       }
 
@@ -132,7 +133,7 @@ const ViewListings: React.FC<ViewListingsProps> = ({ onEditListing, addDebugLog 
       }
 
       // Debug: Log the raw data from Supabase
-      console.log('🔍 DEBUG: Raw listings data from Supabase:', listingsData);
+      debugLog('🔍 DEBUG: Raw listings data from Supabase:', listingsData);
       addDebugLog?.('🔍 DEBUG: Raw listings data from Supabase loaded');
       if (listingsData && listingsData.length > 0) {
         addDebugLog?.(`Found ${listingsData.length} listings`);
@@ -156,7 +157,7 @@ const ViewListings: React.FC<ViewListingsProps> = ({ onEditListing, addDebugLog 
           }
 
           // Debug: Log the raw listing data to see the structure
-          console.log('🔍 DEBUG: Raw listing data:', {
+          debugLog('🔍 DEBUG: Raw listing data:', {
             id: listing.id,
             title: listing.title,
             fb_category_id: listing.fb_category_id,
@@ -182,7 +183,7 @@ const ViewListings: React.FC<ViewListingsProps> = ({ onEditListing, addDebugLog 
           };
 
           // Debug: Log the mapped listing data
-          console.log('🔍 DEBUG: Mapped listing data:', {
+          debugLog('🔍 DEBUG: Mapped listing data:', {
             id: mappedListing.id,
             title: mappedListing.title,
             fb_category_id: mappedListing.fb_category_id,
@@ -372,12 +373,12 @@ const ViewListings: React.FC<ViewListingsProps> = ({ onEditListing, addDebugLog 
           });
 
           const uploadResponseMsg = `📨 Photo upload response: ${JSON.stringify(uploadResponse)}`;
-          console.log(uploadResponseMsg);
+          debugLog(uploadResponseMsg);
           addDebugLog?.(uploadResponseMsg);
 
           if (uploadResponse && uploadResponse.success) {
             const photoSuccessMsg = `✅ Successfully uploaded ${uploadResponse.uploadedCount} photos to Facebook!`;
-            console.log(photoSuccessMsg);
+            debugLog(photoSuccessMsg);
             addDebugLog?.(photoSuccessMsg);
 
             // Wait a moment for photos to process
@@ -479,7 +480,7 @@ const ViewListings: React.FC<ViewListingsProps> = ({ onEditListing, addDebugLog 
       });
 
       const responseMsg = `📨 Content script response: ${JSON.stringify(response)}`;
-      console.log(responseMsg);
+      debugLog(responseMsg);
       addDebugLog?.(responseMsg);
 
       if (response && response.success) {
@@ -546,7 +547,7 @@ const ViewListings: React.FC<ViewListingsProps> = ({ onEditListing, addDebugLog 
   const handlePostToFacebook = async (listing: Listing) => {
     try {
       const debugMsg = `🔄 Starting Facebook post process for listing: ${listing.title}`;
-      console.log(debugMsg);
+      debugLog(debugMsg);
       addDebugLog?.(debugMsg);
       addDebugLog?.('🔍 === FACEBOOK POST PROCESS START ===');
       addDebugLog?.(`📋 Listing ID: ${listing.id}`);
@@ -617,7 +618,7 @@ const ViewListings: React.FC<ViewListingsProps> = ({ onEditListing, addDebugLog 
   const handlePostToNextdoor = async (listing: Listing) => {
     try {
       const debugMsg = `🔄 Starting Nextdoor post process for listing: ${listing.title}`;
-      console.log(debugMsg);
+      debugLog(debugMsg);
       addDebugLog?.(debugMsg);
       addDebugLog?.('🔍 === NEXTDOOR POST PROCESS START ===');
       addDebugLog?.(`📋 Listing ID: ${listing.id}`);
@@ -847,7 +848,7 @@ const ViewListings: React.FC<ViewListingsProps> = ({ onEditListing, addDebugLog 
   const handlePostToCraigslist = async (listing: Listing) => {
     try {
       const debugMsg = `🔄 Starting Craigslist post process for listing: ${listing.title}`;
-      console.log(debugMsg);
+      debugLog(debugMsg);
       addDebugLog?.(debugMsg);
       addDebugLog?.('🔍 === CRAIGSLIST POST PROCESS START ===');
       addDebugLog?.(`📋 Listing ID: ${listing.id}`);
@@ -1109,7 +1110,7 @@ const ViewListings: React.FC<ViewListingsProps> = ({ onEditListing, addDebugLog 
   };
 
   const openLightbox = (imageUrl: string) => {
-    console.log('🖼️ Opening lightbox for image:', imageUrl);
+    debugLog('🖼️ Opening lightbox for image:', imageUrl);
     addDebugLog?.(`🖼️ Opening lightbox for image: ${imageUrl}`);
     setLightbox({ isOpen: true, imageUrl });
   };
@@ -1117,19 +1118,19 @@ const ViewListings: React.FC<ViewListingsProps> = ({ onEditListing, addDebugLog 
   const handlePhotoClick = (e: React.MouseEvent, imageUrl: string) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log('🖼️ Photo clicked:', imageUrl);
+    debugLog('🖼️ Photo clicked:', imageUrl);
     addDebugLog?.(`🖼️ Photo clicked: ${imageUrl}`);
     openLightbox(imageUrl);
   };
 
   const closeLightbox = () => {
-    console.log('🖼️ Closing lightbox');
+    debugLog('🖼️ Closing lightbox');
     addDebugLog?.('🖼️ Closing lightbox');
     setLightbox({ isOpen: false, imageUrl: '' });
   };
 
   const toggleExpandedPhotos = (listingId: string) => {
-    console.log('📸 Toggling expanded photos for listing:', listingId);
+    debugLog('📸 Toggling expanded photos for listing:', listingId);
     addDebugLog?.(`📸 Toggling expanded photos for listing: ${listingId}`);
     setExpandedPhotos(prev => ({
       ...prev,
@@ -1360,7 +1361,7 @@ const ViewListings: React.FC<ViewListingsProps> = ({ onEditListing, addDebugLog 
                 <button
                     className="button primary"
                     onClick={() => {
-                      console.log('🔍 EDIT BUTTON CLICKED: Starting edit for listing:', currentListing.title);
+                      debugLog('🔍 EDIT BUTTON CLICKED: Starting edit for listing:', currentListing.title);
                       addDebugLog?.(`🔍 EDIT BUTTON CLICKED: Starting edit for listing: ${currentListing.title}`);
                       addDebugLog?.(`🔍 EDIT BUTTON: Listing data: fb_category_id=${currentListing.fb_category_id}, nd_category_id=${currentListing.nd_category_id}, condition_id=${currentListing.condition_id}`);
                       onEditListing(currentListing);

@@ -4,6 +4,7 @@ import {
   downloadImageAsFile,
   uploadFilesToInput
 } from '../shared/utils';
+import { debugLog } from '../shared/debug';
 
 // Craigslist-specific message actions
 export const CraigslistMsgAction = {
@@ -76,17 +77,17 @@ const craigslistConditionMapping: { [key: string]: string } = {
 // Function to click the "post an ad" link
 export const clickCraigslistPostAd = (): { success: boolean; message?: string; error?: string } => {
   try {
-    console.log('[DD] 🔍 Looking for "post an ad" link...');
+    debugLog('[DD] 🔍 Looking for "post an ad" link...');
 
     // Look for the post an ad link in the ul#postlks
     const postLink = document.querySelector('ul#postlks a#post[href*="post.craigslist.org"]') as HTMLAnchorElement;
 
     if (postLink) {
-      console.log('[DD] ✅ Found "post an ad" link, clicking it...');
+      debugLog('[DD] ✅ Found "post an ad" link, clicking it...');
       postLink.click();
       return { success: true, message: 'Clicked post an ad link' };
     } else {
-      console.log('[DD] ❌ "post an ad" link not found');
+      debugLog('[DD] ❌ "post an ad" link not found');
       return { success: false, error: 'Post an ad link not found' };
     }
   } catch (error) {
@@ -98,27 +99,27 @@ export const clickCraigslistPostAd = (): { success: boolean; message?: string; e
 // Function to select "for sale by owner"
 export const selectCraigslistPostingType = (): { success: boolean; message?: string; error?: string } => {
   try {
-    console.log('[DD] 🔍 Looking for "for sale by owner" radio button...');
+    debugLog('[DD] 🔍 Looking for "for sale by owner" radio button...');
 
     // Look for the for sale by owner radio button
     const forSaleByOwnerRadio = document.querySelector('input[type="radio"][name="id"][value="fso"]') as HTMLInputElement;
 
     if (forSaleByOwnerRadio) {
-      console.log('[DD] ✅ Found "for sale by owner" radio, selecting it...');
+      debugLog('[DD] ✅ Found "for sale by owner" radio, selecting it...');
       forSaleByOwnerRadio.checked = true;
       forSaleByOwnerRadio.click();
 
       // Click the continue button
       const continueButton = document.querySelector('button[type="submit"][name="go"][value="Continue"]') as HTMLButtonElement;
       if (continueButton) {
-        console.log('[DD] ✅ Found continue button, clicking it...');
+        debugLog('[DD] ✅ Found continue button, clicking it...');
         continueButton.click();
         return { success: true, message: 'Selected for sale by owner and clicked continue' };
       } else {
         return { success: true, message: 'Selected for sale by owner (continue button not found)' };
       }
     } else {
-      console.log('[DD] ❌ "for sale by owner" radio button not found');
+      debugLog('[DD] ❌ "for sale by owner" radio button not found');
       return { success: false, error: 'For sale by owner radio button not found' };
     }
   } catch (error) {
@@ -130,43 +131,43 @@ export const selectCraigslistPostingType = (): { success: boolean; message?: str
 // Function to choose Craigslist category
 export const chooseCraigslistCategory = (categoryName: string): { success: boolean; message?: string; error?: string } => {
   try {
-    console.log('[DD] 🔍 Looking for category selection page...');
+    debugLog('[DD] 🔍 Looking for category selection page...');
 
     // Check if we're on the category selection page
     const categoryForm = document.querySelector('.json-form-item.select.id.category-select');
     if (!categoryForm) {
-      console.log('[DD] ❌ Not on category selection page');
+      debugLog('[DD] ❌ Not on category selection page');
       return { success: false, error: 'Not on category selection page' };
     }
 
     // Find the category value
     const categoryValue = craigslistCategoryMapping[categoryName.toLowerCase()];
     if (!categoryValue) {
-      console.log('[DD] ❌ Category not found in mapping:', categoryName);
+      debugLog('[DD] ❌ Category not found in mapping:', categoryName);
       return { success: false, error: `Category "${categoryName}" not found in mapping` };
     }
 
-    console.log('[DD] 🔍 Looking for category radio button with value:', categoryValue);
+    debugLog('[DD] 🔍 Looking for category radio button with value:', categoryValue);
 
     // Find the radio button for this category
     const categoryRadio = document.querySelector(`input[type="radio"][name="id"][value="${categoryValue}"]`) as HTMLInputElement;
 
     if (categoryRadio) {
-      console.log('[DD] ✅ Found category radio button, selecting it...');
+      debugLog('[DD] ✅ Found category radio button, selecting it...');
       categoryRadio.checked = true;
       categoryRadio.click();
 
       // Click the continue button
       const continueButton = document.querySelector('button[type="submit"][name="go"][value="Continue"]') as HTMLButtonElement;
       if (continueButton) {
-        console.log('[DD] ✅ Found continue button, clicking it...');
+        debugLog('[DD] ✅ Found continue button, clicking it...');
         continueButton.click();
         return { success: true, message: `Selected category: ${categoryName}` };
       } else {
         return { success: true, message: `Selected category: ${categoryName} (continue button not found)` };
       }
     } else {
-      console.log('[DD] ❌ Category radio button not found for value:', categoryValue);
+      debugLog('[DD] ❌ Category radio button not found for value:', categoryValue);
       return { success: false, error: `Category radio button not found for "${categoryName}"` };
     }
   } catch (error) {
@@ -178,7 +179,7 @@ export const chooseCraigslistCategory = (categoryName: string): { success: boole
 // Function to check if we're on a Craigslist posting page
 export const checkCraigslistPostingPage = (): { success: boolean; message?: string; error?: string } => {
   try {
-    console.log('[DD] 🔍 Checking if on Craigslist posting page...');
+    debugLog('[DD] 🔍 Checking if on Craigslist posting page...');
 
     // Check for various indicators that we're on a posting page
     const hasPostLink = document.querySelector('ul#postlks a#post[href*="post.craigslist.org"]');
@@ -233,11 +234,11 @@ export const checkCraigslistPostingPage = (): { success: boolean; message?: stri
 export const fillCraigslistForm = (data: any): { success: boolean; results?: string[]; error?: string } => {
   try {
     const results = [];
-    console.log('[DD] 🔍 Starting Craigslist form fill...');
+    debugLog('[DD] 🔍 Starting Craigslist form fill...');
 
     // Fill title - search by name "PostingTitle"
     if (data.title) {
-      console.log('[DD] 🔍 Looking for title field...');
+      debugLog('[DD] 🔍 Looking for title field...');
       const titleField = document.querySelector('input[name="PostingTitle"]') as HTMLInputElement;
 
       if (titleField) {
@@ -245,16 +246,16 @@ export const fillCraigslistForm = (data: any): { success: boolean; results?: str
         titleField.dispatchEvent(new Event('input', { bubbles: true }));
         titleField.dispatchEvent(new Event('change', { bubbles: true }));
         results.push('✓ Title filled');
-        console.log('[DD] ✅ Title filled:', data.title);
+        debugLog('[DD] ✅ Title filled:', data.title);
       } else {
-        console.log('[DD] ❌ Title field not found');
+        debugLog('[DD] ❌ Title field not found');
         results.push('✗ Title field not found');
       }
     }
 
     // Fill price - search by name "price"
     if (data.price) {
-      console.log('[DD] 🔍 Looking for price field...');
+      debugLog('[DD] 🔍 Looking for price field...');
       const priceField = document.querySelector('input[name="price"]') as HTMLInputElement;
 
       if (priceField) {
@@ -262,16 +263,16 @@ export const fillCraigslistForm = (data: any): { success: boolean; results?: str
         priceField.dispatchEvent(new Event('input', { bubbles: true }));
         priceField.dispatchEvent(new Event('change', { bubbles: true }));
         results.push('✓ Price filled');
-        console.log('[DD] ✅ Price filled:', data.price);
+        debugLog('[DD] ✅ Price filled:', data.price);
       } else {
-        console.log('[DD] ❌ Price field not found');
+        debugLog('[DD] ❌ Price field not found');
         results.push('✗ Price field not found');
       }
     }
 
     // Fill description - search by name "PostingBody"
     if (data.description) {
-      console.log('[DD] 🔍 Looking for description field...');
+      debugLog('[DD] 🔍 Looking for description field...');
       const descField = document.querySelector('textarea[name="PostingBody"]') as HTMLTextAreaElement;
 
       if (descField) {
@@ -279,16 +280,16 @@ export const fillCraigslistForm = (data: any): { success: boolean; results?: str
         descField.dispatchEvent(new Event('input', { bubbles: true }));
         descField.dispatchEvent(new Event('change', { bubbles: true }));
         results.push('✓ Description filled');
-        console.log('[DD] ✅ Description filled');
+        debugLog('[DD] ✅ Description filled');
       } else {
-        console.log('[DD] ❌ Description field not found');
+        debugLog('[DD] ❌ Description field not found');
         results.push('✗ Description field not found');
       }
     }
 
     // Fill zipcode - search by name "postal"
     if (data.zipcode) {
-      console.log('[DD] 🔍 Looking for zipcode field...');
+      debugLog('[DD] 🔍 Looking for zipcode field...');
       const zipField = document.querySelector('input[name="postal"]') as HTMLInputElement;
 
       if (zipField) {
@@ -296,16 +297,16 @@ export const fillCraigslistForm = (data: any): { success: boolean; results?: str
         zipField.dispatchEvent(new Event('input', { bubbles: true }));
         zipField.dispatchEvent(new Event('change', { bubbles: true }));
         results.push('✓ Zipcode filled');
-        console.log('[DD] ✅ Zipcode filled:', data.zipcode);
+        debugLog('[DD] ✅ Zipcode filled:', data.zipcode);
       } else {
-        console.log('[DD] ❌ Zipcode field not found');
+        debugLog('[DD] ❌ Zipcode field not found');
         results.push('✗ Zipcode field not found');
       }
     }
 
     // Fill city/neighborhood - search by name "geographic_area"
     if (data.city) {
-      console.log('[DD] 🔍 Looking for city/neighborhood field...');
+      debugLog('[DD] 🔍 Looking for city/neighborhood field...');
       const cityField = document.querySelector('input[name="geographic_area"]') as HTMLInputElement;
 
       if (cityField) {
@@ -313,16 +314,16 @@ export const fillCraigslistForm = (data: any): { success: boolean; results?: str
         cityField.dispatchEvent(new Event('input', { bubbles: true }));
         cityField.dispatchEvent(new Event('change', { bubbles: true }));
         results.push('✓ City/neighborhood filled');
-        console.log('[DD] ✅ City/neighborhood filled:', data.city);
+        debugLog('[DD] ✅ City/neighborhood filled:', data.city);
       } else {
-        console.log('[DD] ❌ City/neighborhood field not found');
+        debugLog('[DD] ❌ City/neighborhood field not found');
         results.push('✗ City/neighborhood field not found');
       }
     }
 
     // Fill email - search by name "FromEMail"
     if (data.email) {
-      console.log('[DD] 🔍 Looking for email field...');
+      debugLog('[DD] 🔍 Looking for email field...');
       const emailField = document.querySelector('input[name="FromEMail"]') as HTMLInputElement;
 
       if (emailField) {
@@ -330,32 +331,32 @@ export const fillCraigslistForm = (data: any): { success: boolean; results?: str
         emailField.dispatchEvent(new Event('input', { bubbles: true }));
         emailField.dispatchEvent(new Event('change', { bubbles: true }));
         results.push('✓ Email filled');
-        console.log('[DD] ✅ Email filled:', data.email);
+        debugLog('[DD] ✅ Email filled:', data.email);
       } else {
-        console.log('[DD] ❌ Email field not found');
+        debugLog('[DD] ❌ Email field not found');
         results.push('✗ Email field not found');
       }
     }
 
     // Fill condition - search by name "condition"
     if (data.condition) {
-      console.log('[DD] 🔍 Looking for condition field...');
-      console.log('[DD] 📋 Condition data received:', data.condition);
+      debugLog('[DD] 🔍 Looking for condition field...');
+      debugLog('[DD] 📋 Condition data received:', data.condition);
 
       // This is a jQuery UI selectmenu widget - the select is hidden and controlled by a button
       const conditionSelect = document.querySelector('select[name="condition"]') as HTMLSelectElement;
       const conditionButton = document.querySelector('#ui-id-1-button') as HTMLElement;
 
       if (conditionSelect && conditionButton) {
-        console.log('[DD] ✅ Found condition select and button:', conditionSelect, conditionButton);
-        console.log('[DD] 📋 Available options:');
+        debugLog('[DD] ✅ Found condition select and button:', conditionSelect, conditionButton);
+        debugLog('[DD] 📋 Available options:');
         Array.from(conditionSelect.options).forEach(option => {
-          console.log('[DD]   -', option.value, ':', option.textContent);
+          debugLog('[DD]   -', option.value, ':', option.textContent);
         });
 
         // Find the condition value from mapping
         let conditionValue = craigslistConditionMapping[data.condition];
-        console.log('[DD] 📋 Mapped condition value:', data.condition, '->', conditionValue);
+        debugLog('[DD] 📋 Mapped condition value:', data.condition, '->', conditionValue);
 
         // Special handling for "Used - Like New" - try both like new and excellent
         if (data.condition === 'Used - Like New' && !conditionValue) {
@@ -365,10 +366,10 @@ export const fillCraigslistForm = (data: any): { success: boolean; results?: str
 
           if (likeNewOption) {
             conditionValue = '20';
-            console.log('[DD] ✅ Found "like new" option for Used - Like New');
+            debugLog('[DD] ✅ Found "like new" option for Used - Like New');
           } else if (excellentOption) {
             conditionValue = '30';
-            console.log('[DD] ✅ Found "excellent" option for Used - Like New');
+            debugLog('[DD] ✅ Found "excellent" option for Used - Like New');
           }
         }
 
@@ -390,15 +391,15 @@ export const fillCraigslistForm = (data: any): { success: boolean; results?: str
           conditionButton.dispatchEvent(new Event('change', { bubbles: true }));
 
           results.push('✓ Condition filled');
-          console.log('[DD] ✅ Condition filled:', data.condition, '->', conditionValue);
+          debugLog('[DD] ✅ Condition filled:', data.condition, '->', conditionValue);
         } else {
-          console.log('[DD] ❌ Condition not found in mapping or no suitable option:', data.condition);
+          debugLog('[DD] ❌ Condition not found in mapping or no suitable option:', data.condition);
           results.push('✗ Condition not found in mapping or no suitable option');
         }
       } else {
-        console.log('[DD] ❌ Condition select or button not found');
-        console.log('[DD]   - conditionSelect:', conditionSelect);
-        console.log('[DD]   - conditionButton:', conditionButton);
+        debugLog('[DD] ❌ Condition select or button not found');
+        debugLog('[DD]   - conditionSelect:', conditionSelect);
+        debugLog('[DD]   - conditionButton:', conditionButton);
         results.push('✗ Condition field not found');
       }
     }
@@ -413,27 +414,27 @@ export const fillCraigslistForm = (data: any): { success: boolean; results?: str
 // Craigslist-specific photo upload function
 export const uploadCraigslistPhotos = async (photoUrls: string[]): Promise<{ success: boolean; count?: number; message?: string; error?: string }> => {
   try {
-    console.log('[DD] 🔍 Looking for Craigslist upload file input...');
+    debugLog('[DD] 🔍 Looking for Craigslist upload file input...');
     const fileInput = document.querySelector('input[type="file"][accept*="image"]') as HTMLInputElement;
 
     if (!fileInput) {
-      console.log('[DD] ❌ Upload file input not found');
+      debugLog('[DD] ❌ Upload file input not found');
       return { success: false, error: 'Upload file input not found' };
     }
 
-    console.log('[DD] ✅ Found upload file input:', fileInput.tagName, fileInput.className);
-    console.log('[DD] 📸 Photo URLs to upload:', photoUrls);
+    debugLog('[DD] ✅ Found upload file input:', fileInput.tagName, fileInput.className);
+    debugLog('[DD] 📸 Photo URLs to upload:', photoUrls);
 
     // Convert URLs to File objects and upload
     const uploadPromises = photoUrls.map((photoUrl, index) => downloadImageAsFile(photoUrl, index));
 
     // Wait for all photos to be processed
     const files = await Promise.all(uploadPromises);
-    console.log('[DD] ✅ All photos processed, files:', files.length);
+    debugLog('[DD] ✅ All photos processed, files:', files.length);
 
     // Upload files to input
     if (uploadFilesToInput(fileInput, files)) {
-      console.log('[DD] ✅ Photos uploaded successfully!');
+      debugLog('[DD] ✅ Photos uploaded successfully!');
       return { success: true, count: files.length, message: 'Photos uploaded successfully' };
     } else {
       return { success: false, error: 'Failed to upload files to input' };

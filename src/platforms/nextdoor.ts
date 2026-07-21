@@ -4,6 +4,7 @@ import {
   downloadImageAsFile,
   uploadFilesToInput
 } from '../shared/utils';
+import { debugLog } from '../shared/debug';
 
 // Nextdoor category mapping
 const nextdoorCategoryMapping: { [key: string]: string } = {
@@ -57,7 +58,7 @@ export const fillNextdoorForm = async (data: any): Promise<{ success: boolean; r
   const results: string[] = [];
   const logs: string[] = [];
   const addLog = (message: string) => {
-    console.log(`[ND] ${message}`);
+    debugLog(`[ND] ${message}`);
     logs.push(message);
   };
 
@@ -406,27 +407,27 @@ export const fillNextdoorForm = async (data: any): Promise<{ success: boolean; r
 // Nextdoor-specific photo upload function
 export const uploadNextdoorPhotos = async (photoUrls: string[]): Promise<{ success: boolean; count?: number; message?: string; error?: string }> => {
   try {
-    console.log('[DD] 🔍 Looking for Nextdoor upload zone...');
+    debugLog('[DD] 🔍 Looking for Nextdoor upload zone...');
     const fileInput = document.querySelector('input[type="file"][accept*="image"]') as HTMLInputElement;
 
     if (!fileInput) {
-      console.log('[DD] ❌ Upload file input not found');
+      debugLog('[DD] ❌ Upload file input not found');
       return { success: false, error: 'Upload file input not found' };
     }
 
-    console.log('[DD] ✅ Found upload file input:', fileInput.tagName, fileInput.className);
-    console.log('[DD] 📸 Photo URLs to upload:', photoUrls);
+    debugLog('[DD] ✅ Found upload file input:', fileInput.tagName, fileInput.className);
+    debugLog('[DD] 📸 Photo URLs to upload:', photoUrls);
 
     // Convert URLs to File objects and upload
     const uploadPromises = photoUrls.map((photoUrl, index) => downloadImageAsFile(photoUrl, index));
 
     // Wait for all photos to be processed
     const files = await Promise.all(uploadPromises);
-    console.log('[DD] ✅ All photos processed, files:', files.length);
+    debugLog('[DD] ✅ All photos processed, files:', files.length);
 
     // Upload files to input
     if (uploadFilesToInput(fileInput, files)) {
-      console.log('[DD] ✅ Photos uploaded successfully!');
+      debugLog('[DD] ✅ Photos uploaded successfully!');
       return { success: true, count: files.length, message: 'Photos uploaded successfully' };
     } else {
       return { success: false, error: 'Failed to upload files to input' };
@@ -440,7 +441,7 @@ export const uploadNextdoorPhotos = async (photoUrls: string[]): Promise<{ succe
 // Nextdoor-specific free switch toggle function
 export const toggleFreeSwitch = (isFree: boolean): { success: boolean; error?: string } => {
   try {
-    console.log('[DD] 🔍 Looking for free switch...');
+    debugLog('[DD] 🔍 Looking for free switch...');
 
     // Look for free switch by various selectors
     const freeSwitch = document.querySelector('input[type="checkbox"], [role="switch"], [data-testid*="free"]') as HTMLInputElement;
@@ -448,13 +449,13 @@ export const toggleFreeSwitch = (isFree: boolean): { success: boolean; error?: s
     if (freeSwitch) {
       if (freeSwitch.checked !== isFree) {
         freeSwitch.click();
-        console.log('[DD] ✅ Free switch toggled to:', isFree);
+        debugLog('[DD] ✅ Free switch toggled to:', isFree);
       } else {
-        console.log('[DD] ✅ Free switch already in correct state:', isFree);
+        debugLog('[DD] ✅ Free switch already in correct state:', isFree);
       }
       return { success: true };
     } else {
-      console.log('[DD] ❌ Free switch not found');
+      debugLog('[DD] ❌ Free switch not found');
       return { success: false, error: 'Free switch not found' };
     }
   } catch (error) {
@@ -466,21 +467,21 @@ export const toggleFreeSwitch = (isFree: boolean): { success: boolean; error?: s
 // Nextdoor navigation function to handle Post and Skip buttons
 export const handleNextdoorNavigation = async (): Promise<{ success: boolean; status?: string; message?: string; error?: string }> => {
   try {
-    console.log('[DD] 🔍 Starting Nextdoor navigation...');
+    debugLog('[DD] 🔍 Starting Nextdoor navigation...');
 
     // First, check if we're already on the listing form
     const titleField = document.querySelector('input[aria-label="Title"]') as HTMLInputElement;
     const descField = document.querySelector('textarea[aria-label="Describe your item"]') as HTMLTextAreaElement;
 
     if (titleField || descField) {
-      console.log('[DD] ✅ Already on listing form, no navigation needed');
+      debugLog('[DD] ✅ Already on listing form, no navigation needed');
       return { success: true, status: 'form_ready', message: 'Already on listing form' };
     }
 
     // Check if Post button is visible and click it
     const postButton = document.querySelector('div[data-part="button"] div[data-part="children"]') as HTMLElement;
     if (postButton && postButton.textContent?.trim() === 'Post') {
-      console.log('[DD] 🔍 Found Post button, clicking it...');
+      debugLog('[DD] 🔍 Found Post button, clicking it...');
       postButton.click();
 
       // Wait for the dialog to appear and then click Skip
@@ -489,7 +490,7 @@ export const handleNextdoorNavigation = async (): Promise<{ success: boolean; st
       // Now look for Skip button
       const skipButton = document.querySelector('button[aria-label="Skip"]') as HTMLButtonElement;
       if (skipButton) {
-        console.log('[DD] 🔍 Found Skip button, clicking it...');
+        debugLog('[DD] 🔍 Found Skip button, clicking it...');
         skipButton.click();
 
         // Wait for the form to load
@@ -500,14 +501,14 @@ export const handleNextdoorNavigation = async (): Promise<{ success: boolean; st
         const newDescField = document.querySelector('textarea[aria-label="Describe your item"]') as HTMLTextAreaElement;
 
         if (newTitleField || newDescField) {
-          console.log('[DD] ✅ Successfully navigated to listing form');
+          debugLog('[DD] ✅ Successfully navigated to listing form');
           return { success: true, status: 'form_ready', message: 'Successfully navigated to listing form' };
         } else {
-          console.log('[DD] ⚠️ Navigation completed but form not ready yet');
+          debugLog('[DD] ⚠️ Navigation completed but form not ready yet');
           return { success: true, status: 'form_not_ready', message: 'Navigation completed, form may need more time' };
         }
       } else {
-        console.log('[DD] ❌ Skip button not found after clicking Post');
+        debugLog('[DD] ❌ Skip button not found after clicking Post');
         return { success: false, error: 'Skip button not found after clicking Post' };
       }
     }
@@ -515,7 +516,7 @@ export const handleNextdoorNavigation = async (): Promise<{ success: boolean; st
     // If Post button not found, check if Skip button is directly available
     const skipButton = document.querySelector('button[aria-label="Skip"]') as HTMLButtonElement;
     if (skipButton) {
-      console.log('[DD] 🔍 Found Skip button directly, clicking it...');
+      debugLog('[DD] 🔍 Found Skip button directly, clicking it...');
       skipButton.click();
 
       // Wait for the form to load
@@ -526,15 +527,15 @@ export const handleNextdoorNavigation = async (): Promise<{ success: boolean; st
       const newDescField = document.querySelector('textarea[aria-label="Describe your item"]') as HTMLTextAreaElement;
 
       if (newTitleField || newDescField) {
-        console.log('[DD] ✅ Successfully navigated to listing form');
+        debugLog('[DD] ✅ Successfully navigated to listing form');
         return { success: true, status: 'form_ready', message: 'Successfully navigated to listing form' };
       } else {
-        console.log('[DD] ⚠️ Navigation completed but form not ready yet');
+        debugLog('[DD] ⚠️ Navigation completed but form not ready yet');
         return { success: true, status: 'form_not_ready', message: 'Navigation completed, form may need more time' };
       }
     }
 
-    console.log('[DD] ❌ Neither Post nor Skip button found');
+    debugLog('[DD] ❌ Neither Post nor Skip button found');
     return { success: false, error: 'Neither Post nor Skip button found' };
 
   } catch (error) {
@@ -546,7 +547,7 @@ export const handleNextdoorNavigation = async (): Promise<{ success: boolean; st
 // Check if we're on the Nextdoor listing creation page
 export const checkNextdoorListingPage = (): { success: boolean; isOnListingPage: boolean; message?: string } => {
   try {
-    console.log('[DD] 🔍 Checking if on Nextdoor listing page...');
+    debugLog('[DD] 🔍 Checking if on Nextdoor listing page...');
 
     // Look for form fields that indicate we're on the listing creation page
     const titleField = document.querySelector('input[aria-label="Title"]') as HTMLInputElement || document.querySelector('input[aria-label="What are you selling?"]') as HTMLInputElement;
@@ -556,10 +557,10 @@ export const checkNextdoorListingPage = (): { success: boolean; isOnListingPage:
     const isOnListingPage = !!(titleField || priceField || descField);
 
     if (isOnListingPage) {
-      console.log('[DD] ✅ Confirmed on Nextdoor listing creation page');
+      debugLog('[DD] ✅ Confirmed on Nextdoor listing creation page');
       return { success: true, isOnListingPage: true, message: 'On listing creation page' };
     } else {
-      console.log('[DD] ❌ Not on Nextdoor listing creation page');
+      debugLog('[DD] ❌ Not on Nextdoor listing creation page');
       return { success: true, isOnListingPage: false, message: 'Not on listing creation page' };
     }
 

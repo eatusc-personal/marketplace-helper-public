@@ -6,6 +6,7 @@ const GENERATED_DIR = '.generated';
 const GENERATED_CONTENT = `${GENERATED_DIR}/content.ts`;
 
 // Read all the modular files
+const sharedDebug = fs.readFileSync('src/shared/debug.ts', 'utf8');
 const sharedUtils = fs.readFileSync('src/shared/utils.ts', 'utf8');
 const facebookModule = fs.readFileSync('src/platforms/facebook.ts', 'utf8');
 const nextdoorModule = fs.readFileSync('src/platforms/nextdoor.ts', 'utf8');
@@ -40,6 +41,8 @@ const combinedContent = `// ====================================================
 // Source files are in: src/shared/utils.ts, src/platforms/*.ts, src/router.ts
 // Build timestamp: ${new Date().toISOString()}
 // Version: 1.0.1
+
+${removeImports(sharedDebug)}
 
 ${removeImports(sharedUtils)}
 
@@ -94,7 +97,7 @@ ${removeImports(router)}
 // Main unified message handler
 const handleMessage = (request: any, _sender: any, sendResponse: any) => {
   const currentPlatform = detectPlatform(window.location.href);
-  console.log(\`[DD] 🎯 Message received in \${currentPlatform} content script!\`);
+  debugLog(\`[DD] 🎯 Message received in \${currentPlatform} content script!\`);
   console.debug('📨 Content script received message:', request);
 
   if (request.action === SharedMsgAction.ping) {
@@ -115,87 +118,87 @@ const handleMessage = (request: any, _sender: any, sendResponse: any) => {
     const result = clickMoreDetailsButton();
     sendResponse(result);
   } else if (request.action === FacebookMsgAction.uploadFacebookPhotos) {
-    console.log('[DD] 🎯 uploadFacebookPhotos action received!');
-    console.log('[DD] 📋 Request data:', request.data);
+    debugLog('[DD] 🎯 uploadFacebookPhotos action received!');
+    debugLog('[DD] 📋 Request data:', request.data);
     (async () => {
       const result = await uploadFacebookPhotos(request.data);
       sendResponse(result);
     })();
     return true;
   } else if (request.action === FacebookMsgAction.fillFacebookForm) {
-    console.log('[DD] 🎯 fillFacebookForm action received!');
-    console.log('[DD] 📋 Request data:', request.data);
+    debugLog('[DD] 🎯 fillFacebookForm action received!');
+    debugLog('[DD] 📋 Request data:', request.data);
     try {
       const results = fillFacebookForm(request.data);
-      console.log('[DD] 📊 Form fill results:', results);
+      debugLog('[DD] 📊 Form fill results:', results);
       sendResponse({ success: true, result: results });
     } catch (error: any) {
       console.error('[DD] ❌ Form fill error:', error);
       sendResponse({ success: false, error: error.message });
     }
   } else if (request.action === NextdoorMsgAction.fillNextdoorForm) {
-    console.log('[DD] 🎯 fillNextdoorForm action received!');
-    console.log('[DD] 📋 Request data:', request.data);
+    debugLog('[DD] 🎯 fillNextdoorForm action received!');
+    debugLog('[DD] 📋 Request data:', request.data);
     (async () => {
       const result = await fillNextdoorForm(request.data);
       sendResponse(result);
     })();
     return true;
   } else if (request.action === NextdoorMsgAction.uploadNextdoorPhotos) {
-    console.log('[DD] 🎯 uploadNextdoorPhotos action received!');
-    console.log('[DD] 📋 Request data:', request.data);
+    debugLog('[DD] 🎯 uploadNextdoorPhotos action received!');
+    debugLog('[DD] 📋 Request data:', request.data);
     (async () => {
       const result = await uploadNextdoorPhotos(request.data);
       sendResponse(result);
     })();
     return true;
   } else if (request.action === NextdoorMsgAction.handleNextdoorNavigation) {
-    console.log('[DD] 🎯 handleNextdoorNavigation action received!');
+    debugLog('[DD] 🎯 handleNextdoorNavigation action received!');
     (async () => {
       const result = await handleNextdoorNavigation();
       sendResponse(result);
     })();
     return true;
   } else if (request.action === NextdoorMsgAction.checkNextdoorListingPage) {
-    console.log('[DD] 🎯 checkNextdoorListingPage action received!');
+    debugLog('[DD] 🎯 checkNextdoorListingPage action received!');
     const result = checkNextdoorListingPage();
     sendResponse(result);
   } else if (request.action === CraigslistMsgAction.fillCraigslistForm) {
-    console.log('[DD] 🎯 fillCraigslistForm action received!');
-    console.log('[DD] 📋 Request data:', request.data);
+    debugLog('[DD] 🎯 fillCraigslistForm action received!');
+    debugLog('[DD] 📋 Request data:', request.data);
     const result = fillCraigslistForm(request.data);
     sendResponse(result);
   } else if (request.action === CraigslistMsgAction.uploadCraigslistPhotos) {
-    console.log('[DD] 🎯 uploadCraigslistPhotos action received!');
-    console.log('[DD] 📋 Request data:', request.data);
+    debugLog('[DD] 🎯 uploadCraigslistPhotos action received!');
+    debugLog('[DD] 📋 Request data:', request.data);
     (async () => {
       const result = await uploadCraigslistPhotos(request.data);
       sendResponse(result);
     })();
     return true;
   } else if (request.action === CraigslistMsgAction.clickCraigslistPostAd) {
-    console.log('[DD] 🎯 clickCraigslistPostAd action received!');
+    debugLog('[DD] 🎯 clickCraigslistPostAd action received!');
     const result = clickCraigslistPostAd();
     sendResponse(result);
   } else if (request.action === CraigslistMsgAction.selectCraigslistPostingType) {
-    console.log('[DD] 🎯 selectCraigslistPostingType action received!');
+    debugLog('[DD] 🎯 selectCraigslistPostingType action received!');
     const result = selectCraigslistPostingType();
     sendResponse(result);
   } else if (request.action === CraigslistMsgAction.chooseCraigslistCategory) {
-    console.log('[DD] 🎯 chooseCraigslistCategory action received!');
-    console.log('[DD] 📋 Request data:', request.data);
+    debugLog('[DD] 🎯 chooseCraigslistCategory action received!');
+    debugLog('[DD] 📋 Request data:', request.data);
     const result = chooseCraigslistCategory(request.data);
     sendResponse(result);
   } else if (request.action === CraigslistMsgAction.checkCraigslistPostingPage) {
-    console.log('[DD] 🎯 checkCraigslistPostingPage action received!');
+    debugLog('[DD] 🎯 checkCraigslistPostingPage action received!');
     const result = checkCraigslistPostingPage();
     sendResponse(result);
   } else if (request.type === 'FETCH_CONTENT') {
-    console.log('[DD] 🎯 FETCH_CONTENT action received!');
-    console.log('[DD] 📋 Request URL:', request.url);
+    debugLog('[DD] 🎯 FETCH_CONTENT action received!');
+    debugLog('[DD] 📋 Request URL:', request.url);
     (async () => {
       try {
-        console.log('[DD] 🚀 Starting fetch from content script context...');
+        debugLog('[DD] 🚀 Starting fetch from content script context...');
         const response = await fetch(request.url, {
           credentials: 'include',
           headers: {
@@ -209,21 +212,21 @@ const handleMessage = (request: any, _sender: any, sendResponse: any) => {
           }
         });
 
-        console.log('[DD] 📡 Response status:', response.status);
-        console.log('[DD] 📡 Response URL:', response.url);
+        debugLog('[DD] 📡 Response status:', response.status);
+        debugLog('[DD] 📡 Response URL:', response.url);
 
         if (!response.ok) {
-          console.log('[DD] ❌ HTTP error:', response.status);
+          debugLog('[DD] ❌ HTTP error:', response.status);
           sendResponse({ ok: false, status: response.status });
           return;
         }
 
         const text = await response.text();
-        console.log('[DD] 📄 Response text length:', text.length);
-        console.log('[DD] 📄 Response preview:', text.slice(0, 500));
+        debugLog('[DD] 📄 Response text length:', text.length);
+        debugLog('[DD] 📄 Response preview:', text.slice(0, 500));
 
         const looksLoggedOut = /login|Log In|checkpoint/i.test(text);
-        console.log('[DD] 🔍 Looks logged out:', looksLoggedOut);
+        debugLog('[DD] 🔍 Looks logged out:', looksLoggedOut);
 
         sendResponse({
           ok: true,
@@ -254,10 +257,10 @@ const handleMessage = (request: any, _sender: any, sendResponse: any) => {
 // ============================================================================
 // MESSAGE LISTENER SETUP (Added by build script)
 // ============================================================================
-console.log('[DD] 🎯 Setting up message listener immediately...');
+debugLog('[DD] 🎯 Setting up message listener immediately...');
 try {
   chrome.runtime.onMessage.addListener(handleMessage);
-  console.log('[DD] ✅ Message listener set up successfully!');
+  debugLog('[DD] ✅ Message listener set up successfully!');
 } catch (error) {
   console.error('[DD] ❌ Error setting up message listener:', error);
 }

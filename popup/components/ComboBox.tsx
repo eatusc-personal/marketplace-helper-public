@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { debugLog } from '../../src/shared/debug';
 
 interface Option {
   id: string;
@@ -43,7 +44,7 @@ const ComboBox: React.FC<ComboBoxProps> = ({
       // First try to find by ID (UUID)
       const selectedOptionById = options.find(option => option.id === value);
       if (selectedOptionById) {
-        console.log('🔍 COMBOBOX DEBUG: Found option by ID:', selectedOptionById);
+        debugLog('🔍 COMBOBOX DEBUG: Found option by ID:', selectedOptionById);
         setInputValue(selectedOptionById.name);
         return;
       }
@@ -51,13 +52,13 @@ const ComboBox: React.FC<ComboBoxProps> = ({
       // Then try to find by name (for custom values or name-based lookups)
       const selectedOptionByName = options.find(option => option.name === value);
       if (selectedOptionByName) {
-        console.log('🔍 COMBOBOX DEBUG: Found option by name:', selectedOptionByName);
+        debugLog('🔍 COMBOBOX DEBUG: Found option by name:', selectedOptionByName);
         setInputValue(selectedOptionByName.name);
         return;
       }
 
       // If no option found, use the value as-is (custom value)
-      console.log('🔍 COMBOBOX DEBUG: No option found, using value as-is:', value);
+      debugLog('🔍 COMBOBOX DEBUG: No option found, using value as-is:', value);
       setInputValue(value);
     } else {
       setInputValue('');
@@ -91,7 +92,7 @@ const ComboBox: React.FC<ComboBoxProps> = ({
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
-    console.log('🔍 COMBOBOX DEBUG: handleInputChange called:', { newValue, name });
+    debugLog('🔍 COMBOBOX DEBUG: handleInputChange called:', { newValue, name });
     setInputValue(newValue);
     setIsOpen(true);
 
@@ -101,15 +102,15 @@ const ComboBox: React.FC<ComboBoxProps> = ({
     );
 
     if (exactMatch) {
-      console.log('🔍 COMBOBOX DEBUG: Exact match found:', exactMatch);
+      debugLog('🔍 COMBOBOX DEBUG: Exact match found:', exactMatch);
       onChange(exactMatch.id, name);
     } else if (allowCustom && newValue.trim() !== '') {
       // For custom values, we'll use the input value as both id and name
-      console.log('🔍 COMBOBOX DEBUG: Using custom value:', newValue.trim());
+      debugLog('🔍 COMBOBOX DEBUG: Using custom value:', newValue.trim());
       onChange(newValue.trim(), name);
     } else if (newValue.trim() === '') {
       // Clear the value when input is empty
-      console.log('🔍 COMBOBOX DEBUG: Clearing value');
+      debugLog('🔍 COMBOBOX DEBUG: Clearing value');
       onChange('', name);
     }
   };
@@ -119,7 +120,7 @@ const ComboBox: React.FC<ComboBoxProps> = ({
   };
 
   const handleOptionClick = (option: Option) => {
-    console.log('🔍 COMBOBOX DEBUG: handleOptionClick called:', { option, name });
+    debugLog('🔍 COMBOBOX DEBUG: handleOptionClick called:', { option, name });
     setInputValue(option.name);
     onChange(option.id, name);
     // Call onSelect callback when user selects from dropdown

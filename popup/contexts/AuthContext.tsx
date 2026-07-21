@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { getCurrentUser, getCurrentSession, onAuthStateChange, refreshSession } from '../../src/auth';
+import { debugLog } from '../../src/shared/debug';
 
 interface AuthContextType {
   user: User | null;
@@ -34,7 +35,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
         // If no session, try to refresh it
         if (!currentSession) {
-          console.log('No session found, attempting to refresh...');
+          debugLog('No session found, attempting to refresh...');
           const { session: refreshedSession } = await refreshSession();
           currentSession = refreshedSession;
           if (refreshedSession) {
@@ -42,7 +43,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           }
         }
 
-        console.log('AuthContext initialization:', {
+        debugLog('AuthContext initialization:', {
           session: currentSession?.user?.email,
           user: currentUser?.email,
           sessionExists: !!currentSession,
@@ -63,8 +64,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     // Listen for auth state changes
     const { data: { subscription } } = onAuthStateChange((event, session) => {
-      console.log('Auth state changed:', event, session?.user?.email);
-      console.log('Session details:', session);
+      debugLog('Auth state changed:', event, session?.user?.email);
+      debugLog('Session details:', session);
 
       setSession(session);
       setUser(session?.user ?? null);

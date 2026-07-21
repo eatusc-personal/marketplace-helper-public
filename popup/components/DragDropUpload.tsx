@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { debugLog } from '../../src/shared/debug';
 
 // Add CSS for spinner animation
 const spinnerStyles = `
@@ -43,7 +44,7 @@ const DragDropUpload: React.FC<DragDropUploadProps> = ({
   // Enhanced file processing with HEIC conversion
   const processFiles = async (files: FileList): Promise<File[]> => {
     const startMessage = `🔄 FILE PROCESSING: Starting to process ${files.length} files...`;
-    console.log(startMessage);
+    debugLog(startMessage);
     addDebugLog?.(startMessage);
 
     // Check if any files need HEIC conversion
@@ -93,7 +94,7 @@ const DragDropUpload: React.FC<DragDropUploadProps> = ({
     }
 
     const finalMessage = `✅ FILE PROCESSING COMPLETE: Processed ${files.length} files, ${processedFiles.length} total files ready`;
-    console.log(finalMessage);
+    debugLog(finalMessage);
     addDebugLog?.(finalMessage);
 
     // Clear conversion status when done

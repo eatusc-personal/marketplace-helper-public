@@ -1,5 +1,6 @@
 import { supabase } from './supabase';
 import { User, Session, AuthError } from '@supabase/supabase-js';
+import { debugLog } from './shared/debug';
 
 export interface AuthState {
   user: User | null;
@@ -29,7 +30,7 @@ export async function signUp({ email, password }: SignUpData): Promise<{ user: U
       options: emailRedirectTo ? { emailRedirectTo } : undefined
     });
 
-    console.log('🔍 DEBUG: Supabase signup response:', {
+    debugLog('🔍 DEBUG: Supabase signup response:', {
       hasUser: Boolean(data.user),
       session: !!data.session,
       error: error?.message,
@@ -60,7 +61,7 @@ export async function signIn({ email, password }: SignInData): Promise<{ user: U
     if (data.session) {
       // Ensure the session is set in the client
       await supabase.auth.setSession(data.session);
-      console.log('Session set successfully');
+      debugLog('Session set successfully');
     }
 
     return {
@@ -102,8 +103,8 @@ export async function getCurrentUser(): Promise<User | null> {
 export async function getCurrentSession(): Promise<Session | null> {
   try {
     const { data: { session }, error } = await supabase.auth.getSession();
-    console.log('Current session:', session?.user?.email);
-    console.log('Session error:', error);
+    debugLog('Current session:', session?.user?.email);
+    debugLog('Session error:', error);
 
     if (error) {
       console.error('Session error:', error);

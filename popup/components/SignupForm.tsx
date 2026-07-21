@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { signUp } from '../../src/auth';
+import { debugLog } from '../../src/shared/debug';
 
 interface SignupFormProps {
   onSwitchToLogin: () => void;
@@ -73,7 +74,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSwitchToLogin }) => {
         password: formData.password
       });
 
-      console.log('Signup response:', { user, error });
+      debugLog('Signup response:', { user, error });
 
       // Set debug info to show what's happening
       setDebugInfo(`Response: ${JSON.stringify({ user: user?.id, error: error?.message }, null, 2)}`);
@@ -82,7 +83,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSwitchToLogin }) => {
         console.error('Signup error:', error);
         setError(error.message);
       } else if (user) {
-        console.log('User returned from signup:', {
+        debugLog('User returned from signup:', {
           id: user.id,
           email: user.email,
           email_confirmed_at: user.email_confirmed_at,
