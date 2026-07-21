@@ -54,39 +54,20 @@ This API endpoint is designed to be used by the Chrome extension plugin to conve
 
 ## Local Testing
 
-### Option 1: Basic Conversion Test
+### Local API Server
 1. Install dependencies from the `Website` directory:
    ```bash
    cd Website
    npm install
    ```
 
-2. Run basic conversion test:
-   ```bash
-   node api/test-converter.js
-   ```
-
-3. Ensure you have a test HEIC file at `/test-files/IMG_0203.HEIC`
-
-### Option 2: Full API Server Test
-1. Start local API server:
+2. Start the local API server:
    ```bash
    npm run api
    ```
    Server runs at: `http://localhost:3001`
 
-2. In another terminal, test the API:
-   ```bash
-   node api/test-api-client.js
-   ```
-
-### Option 3: Complete Test Suite
-Run all tests at once:
-```bash
-node api/test-all.js
-```
-
-### Option 4: Vercel Local Development
+### Vercel Local Development
 ```bash
 # Install Vercel CLI globally
 npm i -g vercel

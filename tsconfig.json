@@ -23,7 +23,7 @@
     /* Chrome Extension */
     "types": ["chrome", "vite/client"]
   },
-  "include": ["src", "popup", "shared"],
+  "include": ["src", "popup"],
   "exclude": ["src/__tests__", "e2e", "**/*.spec.ts", "**/*.test.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

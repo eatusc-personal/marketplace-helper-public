@@ -15,14 +15,7 @@ cd Website
 npm install
 ```
 
-### 2. Test Locally (Optional)
-
-```bash
-# Add a test HEIC file to /test-files/IMG_0203.HEIC
-node api/test-converter.js
-```
-
-### 3. Deploy to Vercel
+### 2. Deploy to Vercel
 
 ```bash
 # From the Website directory
@@ -34,14 +27,14 @@ vercel
 # - Confirm settings
 ```
 
-### 4. Configure Environment (if needed)
+### 3. Configure Environment (if needed)
 
 ```bash
 # Set any environment variables
 vercel env add VARIABLE_NAME
 ```
 
-### 5. Test Deployed API
+### 4. Test Deployed API
 
 ```bash
 # Get the deployment URL from Vercel dashboard

@@ -94,6 +94,21 @@ export default function Listings() {
     return matchesSearch && matchesCategory
   })
 
+  const categoryOptions = (() => {
+    const options = new Map<string, string>()
+    for (const listing of listings) {
+      const pairs: Array<[string | null, string | undefined]> = [
+        [listing.fb_category_id, listing.fb_category?.name],
+        [listing.nd_category_id, listing.nd_category?.name],
+        [listing.cl_category_id, listing.cl_category?.name]
+      ]
+      for (const [id, name] of pairs) {
+        if (id && name && !options.has(id)) options.set(id, name)
+      }
+    }
+    return Array.from(options.entries()).sort((a, b) => a[1].localeCompare(b[1]))
+  })()
+
   const getCategoryName = (listing: Listing) => {
     return listing.fb_category?.name || listing.nd_category?.name || listing.cl_category?.name || 'Uncategorized'
   }
@@ -173,7 +188,9 @@ export default function Listings() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="all">All Categories</option>
-                {/* TODO: Add category options */}
+                {categoryOptions.map(([id, name]) => (
+                  <option key={id} value={id}>{name}</option>
+                ))}
               </select>
             </div>
           </div>
