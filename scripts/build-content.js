@@ -193,58 +193,6 @@ const handleMessage = (request: any, _sender: any, sendResponse: any) => {
     debugLog('[DD] 🎯 checkCraigslistPostingPage action received!');
     const result = checkCraigslistPostingPage();
     sendResponse(result);
-  } else if (request.type === 'FETCH_CONTENT') {
-    debugLog('[DD] 🎯 FETCH_CONTENT action received!');
-    debugLog('[DD] 📋 Request URL:', request.url);
-    (async () => {
-      try {
-        debugLog('[DD] 🚀 Starting fetch from content script context...');
-        const response = await fetch(request.url, {
-          credentials: 'include',
-          headers: {
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-            'Accept-Language': 'en-US,en;q=0.9',
-            'Accept-Encoding': 'gzip, deflate, br',
-            'DNT': '1',
-            'Connection': 'keep-alive',
-            'Upgrade-Insecure-Requests': '1'
-          }
-        });
-
-        debugLog('[DD] 📡 Response status:', response.status);
-        debugLog('[DD] 📡 Response URL:', response.url);
-
-        if (!response.ok) {
-          debugLog('[DD] ❌ HTTP error:', response.status);
-          sendResponse({ ok: false, status: response.status });
-          return;
-        }
-
-        const text = await response.text();
-        debugLog('[DD] 📄 Response text length:', text.length);
-        debugLog('[DD] 📄 Response preview:', text.slice(0, 500));
-
-        const looksLoggedOut = /login|Log In|checkpoint/i.test(text);
-        debugLog('[DD] 🔍 Looks logged out:', looksLoggedOut);
-
-        sendResponse({
-          ok: true,
-          status: response.status,
-          loggedOut: looksLoggedOut,
-          debug: {
-            responseLength: text.length,
-            responsePreview: text.slice(0, 200),
-            finalUrl: response.url,
-            method: 'content-script-fetch'
-          }
-        });
-      } catch (e) {
-        console.error('[DD] ❌ FETCH_CONTENT error:', e);
-        sendResponse({ ok: false, error: String(e) });
-      }
-    })();
-    return true;
   } else {
     console.debug('❓ Unknown action:', request.action);
     sendResponse({ success: false, error: 'Unknown action: ' + request.action });
