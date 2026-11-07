@@ -6,7 +6,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/eatusc/marketplace-helper-public.git"
+    "url": "git+https://github.com/eatusc-personal/marketplace-helper-public.git"
   },
   "keywords": [
     "chrome-extension",

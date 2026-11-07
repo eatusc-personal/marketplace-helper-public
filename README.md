@@ -2,7 +2,7 @@
 
 # Marketplace Helper
 
-[![CI](https://github.com/eatusc/marketplace-helper-public/actions/workflows/ci.yml/badge.svg)](https://github.com/eatusc/marketplace-helper-public/actions/workflows/ci.yml)
+[![CI](https://github.com/eatusc-personal/marketplace-helper-public/actions/workflows/ci.yml/badge.svg)](https://github.com/eatusc-personal/marketplace-helper-public/actions/workflows/ci.yml)
 [![Manifest V3](https://img.shields.io/badge/Chrome-Manifest%20V3-4285F4)](manifest.json)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
@@ -94,7 +94,7 @@ manifest.json          Chrome permissions and supported host patterns
 ### 1. Install dependencies
 
 ```bash
-git clone https://github.com/eatusc/marketplace-helper-public.git
+git clone https://github.com/eatusc-personal/marketplace-helper-public.git
 cd marketplace-helper-public
 npm install
 npm install --prefix Website

@@ -301,7 +301,7 @@ export default function Settings() {
                 Need help? Open an issue in the project repository.
               </p>
               <Button variant="outline" size="sm" asChild>
-                <a href="https://github.com/eatusc/marketplace-helper-public/issues" target="_blank" rel="noopener noreferrer">
+                <a href="https://github.com/eatusc-personal/marketplace-helper-public/issues" target="_blank" rel="noopener noreferrer">
                   GitHub Issues
                 </a>
               </Button>
