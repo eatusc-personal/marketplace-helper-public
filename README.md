@@ -10,7 +10,7 @@ A multi-platform Chrome extension for creating a marketplace listing once and
 transferring its fields and photos into Facebook Marketplace, Craigslist, and
 Nextdoor forms.
 
-> This is a standalone public demo. It contains no hosted backend credentials,
+> This is the public source of the extension. It contains no hosted backend credentials,
 > production database contents, customer records, or deployable environment
 > files. Connect only a Supabase project that you own and have secured.
 
